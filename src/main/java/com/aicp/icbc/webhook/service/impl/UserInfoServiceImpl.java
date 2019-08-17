@@ -4,6 +4,7 @@ import com.aicp.icbc.webhook.dao.UserInfoExcelDao;
 import com.aicp.icbc.webhook.dto.UserInfoDto;
 import com.aicp.icbc.webhook.service.BusinessService;
 import com.aicp.icbc.webhook.utils.CommonUtils;
+import com.aicp.icbc.webhook.utils.ValueFilteUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
 import java.util.*;
 
 /**
@@ -35,7 +37,7 @@ public class UserInfoServiceImpl implements BusinessService {
         if (StringUtils.isEmpty(action)) {
             return false;
         }
-        if ("get_userinfo".equals(action)) {
+        if ("getUserByPhoneNumber".equals(action)) {
             return true;
         }
         return false;
@@ -43,20 +45,29 @@ public class UserInfoServiceImpl implements BusinessService {
 
     @Override
     public Map<String, Object> getResult(Map<String, Object> requestMap) {
-//        UserInfoDto userInfoDto = JSONObject.parseObject((String) requestMap.get("userInfoStr"), UserInfoDto.class);
-        String phoneNumber = (String) requestMap.get("query_text");
-        List<UserInfoDto> resultList = userInfoExcelDao.getAllUserInfoList();
+        Map<String, Object> context = (Map<String, Object>) requestMap.get("context");
+        String phoneNumber = (String) context.get("phoneNumber");
+        List<UserInfoDto> allUserInfoList = userInfoExcelDao.getAllUserInfoList();
         Map<String, Object> data = new HashMap<>();
+        //判断传入的内容是否匹配查询的结果值
+        ValueFilteUtil<UserInfoDto> valueFilteUtil = new ValueFilteUtil<>();
+        List<UserInfoDto> resultList = valueFilteUtil.getMatchList(context,allUserInfoList);
+        //当匹配值不空时
         if (resultList.size() > 0) {
             JSONArray jsonArray = new JSONArray();
             for (UserInfoDto perDto:resultList) {
-                if(phoneNumber.equals(perDto.getContactPhoneNumber())){
+                if(phoneNumber.equals(perDto.getPhoneNumber())){
                     jsonArray.add(JSON.toJSONString(perDto));
                 }
             }
-            data.put("value", jsonArray);
+            data.put("userName",resultList.get(0).getUserName());
             Map<String, Object> returnContext = new HashMap<>();
+            Map<String,Object> childMap = new HashMap<>();
+            childMap.put("sex",resultList.get(0).getSex());
+            returnContext.put("jsonArray", jsonArray);
+            returnContext.put("cardNumber",resultList.get(0).getCardNumber());
             returnContext.put("api_response_status", true);
+            returnContext.put("size",resultList.size());
             data.put("context", returnContext);
         } else {
             Map<String, Object> returnContext = new HashMap<>();

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,9 +32,10 @@ public class UserInfoExcelDao {
      */
     public List<UserInfoDto> getAllUserInfoList() {
         List<UserInfoDto> userInfoDtoList = new ArrayList<>();
-
+        //访问的classes-路径下的，Excel文件名
+        String fileName = "核身流程-身份信息.xlsx";
         //调用easyexcel 访问数据
-        try (InputStream in = new FileInputStream("核身流程-身份信息.xlsx");) {
+        try (InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);) {
             AnalysisEventListener<UserInfoDto> listener = new AnalysisEventListener<UserInfoDto>() {
 
                 //访问，每一行数据
@@ -47,9 +49,17 @@ public class UserInfoExcelDao {
                     System.err.println("doAfterAllAnalysed...");
                 }
             };
-            ExcelReader excelReader = new ExcelReader(in, ExcelTypeEnum.XLSX, null, listener);
-            // 第二个参数为表头行数，按照实际设置
-            excelReader.read(new Sheet(1, 1, UserInfoDto.class));
+            if(fileName.indexOf(".xlsx") > 0){
+                //读取xlsx后缀的Excel内容
+                ExcelReader excelReader = new ExcelReader(in, ExcelTypeEnum.XLSX, null, listener);
+                // 第二个参数为表头行数，按照实际设置
+                excelReader.read(new Sheet(1, 1, UserInfoDto.class));
+            }else{
+                //读取xls后缀的Excel内容
+                ExcelReader excelReader = new ExcelReader(in, ExcelTypeEnum.XLS, null, listener);
+                // 第二个参数为表头行数，按照实际设置
+                excelReader.read(new Sheet(1, 1, UserInfoDto.class));
+            }
         } catch (IOException e) {
             e.printStackTrace();
             log.error("找不到 核身流程-身份信息.xlsx");

@@ -37,7 +37,7 @@ public class UserInfoDto extends BaseRowModel {
     private String optimalPayment;
 
     @ExcelProperty(value = {"联系电话"}, index = 9)
-    private String contactPhoneNumber;
+    private String phoneNumber;
 
     @ExcelProperty(value = {"发卡地区"}, index = 10)
     private String cardingArea;

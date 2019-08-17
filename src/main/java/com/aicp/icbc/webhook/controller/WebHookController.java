@@ -7,8 +7,6 @@ import com.aicp.icbc.webhook.rest.ApiResponse;
 import com.aicp.icbc.webhook.service.BusinessService;
 import com.aicp.icbc.webhook.utils.RequestUtils;
 import com.aicp.icbc.webhook.utils.ResponseUtil;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,12 +37,12 @@ public class WebHookController {
      * @return
      * @throws IOException
      */
-    @PostMapping("/getUserByPhoneNumber")
+    @RequestMapping("/verifyIdentityInfo")
     public String getUserByPhoneNumber(@RequestBody String requestBody) throws IOException{
         // 解析查询请求
-        JSONObject jsonObject = JSON.parseObject(requestBody);
         Map<String, Object> request = RequestUtils.getRequest(requestBody);
-        // 进行业务判断,这里判断是否为查询核身流程中的用户信息
+
+        //进行业务判断,这里判断是否为查询核身流程中的用户信息
         if (userInfoService.isServiceBeCalled(request)) {
             Map<String, Object> resultData = userInfoService.getResult(request);
             return ResponseUtil.usccess(resultData);
@@ -60,6 +58,7 @@ public class WebHookController {
             // 当前节点中配置的value，如果webhook异常将这个话术返回给用户
             data.put("value", value);
         }
+
         return ResponseUtil.serverNotMatch(data);
     }
 

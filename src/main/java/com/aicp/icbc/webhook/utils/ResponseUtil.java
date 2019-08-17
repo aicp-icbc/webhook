@@ -5,6 +5,8 @@ import com.aicp.icbc.webhook.enums.ResponseStatusEnum;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Description: 返回信息工具类
@@ -56,6 +58,5 @@ public class ResponseUtil {
         }
         return resultStr;
     }
-
 
 }
