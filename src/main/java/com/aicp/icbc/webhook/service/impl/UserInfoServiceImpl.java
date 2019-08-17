@@ -4,18 +4,14 @@ import com.aicp.icbc.webhook.dao.UserInfoExcelDao;
 import com.aicp.icbc.webhook.dto.UserInfoDto;
 import com.aicp.icbc.webhook.service.BusinessService;
 import com.aicp.icbc.webhook.utils.CommonUtils;
-import com.aicp.icbc.webhook.utils.ValueFilteUtil;
+import com.aicp.icbc.webhook.utils.FilterSetterUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
+
 import java.util.*;
 
 /**
@@ -45,34 +41,34 @@ public class UserInfoServiceImpl implements BusinessService {
 
     @Override
     public Map<String, Object> getResult(Map<String, Object> requestMap) {
-        Map<String, Object> context = (Map<String, Object>) requestMap.get("context");
-        String phoneNumber = (String) context.get("phoneNumber");
-        List<UserInfoDto> allUserInfoList = userInfoExcelDao.getAllUserInfoList();
+        Map<String, Object> requestContext = (Map<String, Object>) requestMap.get("context");
         Map<String, Object> data = new HashMap<>();
+
+        //获取全部Excel中的记录
+        List<UserInfoDto> allUserInfoList = userInfoExcelDao.getAllUserInfoList();
+
         //判断传入的内容是否匹配查询的结果值
-        ValueFilteUtil<UserInfoDto> valueFilteUtil = new ValueFilteUtil<>();
-        List<UserInfoDto> resultList = valueFilteUtil.getMatchList(context,allUserInfoList);
+        FilterSetterUtil<UserInfoDto> filterSetterUtil = new FilterSetterUtil<>();
+        List<UserInfoDto> resultList = filterSetterUtil.getMatchList(requestContext,allUserInfoList);
+
         //当匹配值不空时
         if (resultList.size() > 0) {
-            JSONArray jsonArray = new JSONArray();
-            for (UserInfoDto perDto:resultList) {
-                if(phoneNumber.equals(perDto.getPhoneNumber())){
-                    jsonArray.add(JSON.toJSONString(perDto));
-                }
-            }
             data.put("userName",resultList.get(0).getUserName());
-            Map<String, Object> returnContext = new HashMap<>();
+            //将返回的对象进行key-value赋值
+            Map<String, Object> responseContext = filterSetterUtil.setContextValue(resultList.get(0));
+
+            //设值返回标志字段
             Map<String,Object> childMap = new HashMap<>();
             childMap.put("sex",resultList.get(0).getSex());
-            returnContext.put("jsonArray", jsonArray);
-            returnContext.put("cardNumber",resultList.get(0).getCardNumber());
-            returnContext.put("api_response_status", true);
-            returnContext.put("size",resultList.size());
-            data.put("context", returnContext);
+            responseContext.put("cardNumber",resultList.get(0).getCardNumber());
+            responseContext.put("api_response_status", true);
+            responseContext.put("size",resultList.size());
+            requestContext.put("childMap",childMap);
+            data.put("context", responseContext);
         } else {
-            Map<String, Object> returnContext = new HashMap<>();
-            returnContext.put("api_response_status", false);
-            data.put("context", returnContext);
+            Map<String, Object> responseContext = new HashMap<>();
+            responseContext.put("api_response_status", false);
+            data.put("context", responseContext);
         }
         return data;
     }
