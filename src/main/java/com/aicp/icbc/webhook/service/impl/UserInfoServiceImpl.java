@@ -5,8 +5,6 @@ import com.aicp.icbc.webhook.dto.UserInfoDto;
 import com.aicp.icbc.webhook.service.BusinessService;
 import com.aicp.icbc.webhook.utils.CommonUtils;
 import com.aicp.icbc.webhook.utils.FilterSetterUtil;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,17 +51,12 @@ public class UserInfoServiceImpl implements BusinessService {
 
         //当匹配值不空时
         if (resultList.size() > 0) {
-            data.put("userName",resultList.get(0).getUserName());
             //将返回的对象进行key-value赋值
             Map<String, Object> responseContext = filterSetterUtil.setContextValue(resultList.get(0));
 
             //设值返回标志字段
-            Map<String,Object> childMap = new HashMap<>();
-            childMap.put("sex",resultList.get(0).getSex());
-            responseContext.put("cardNumber",resultList.get(0).getCardNumber());
             responseContext.put("api_response_status", true);
             responseContext.put("size",resultList.size());
-            requestContext.put("childMap",childMap);
             data.put("context", responseContext);
         } else {
             Map<String, Object> responseContext = new HashMap<>();
