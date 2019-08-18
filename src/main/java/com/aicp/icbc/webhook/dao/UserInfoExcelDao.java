@@ -9,10 +9,8 @@ import com.alibaba.excel.support.ExcelTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,12 +39,13 @@ public class UserInfoExcelDao {
                 //访问，每一行数据
                 @Override
                 public void invoke(UserInfoDto object, AnalysisContext context) {
-                    System.err.println("Row:" + context.getCurrentRowNum() + "  Data:" + object);
+//                    System.err.println("Row:" + context.getCurrentRowNum() + "  Data:" + object);
                     userInfoDtoList.add(object);
                 }
                 @Override
                 public void doAfterAllAnalysed(AnalysisContext context) {
-                    System.err.println("doAfterAllAnalysed...");
+//                    System.err.println(fileName + "数据读取完毕..." + "共读取：" + userInfoDtoList.size() + "条数据");
+                    log.info(fileName + "数据读取完毕..." + "共读取：" + userInfoDtoList.size() + "条数据");
                 }
             };
             if(fileName.indexOf(".xlsx") > 0){
@@ -62,7 +61,7 @@ public class UserInfoExcelDao {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            log.error("找不到 核身流程-身份信息.xlsx");
+            log.error("找不到 " + fileName);
         }
 
         return userInfoDtoList;
