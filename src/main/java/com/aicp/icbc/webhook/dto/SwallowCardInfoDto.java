@@ -5,7 +5,7 @@ import com.alibaba.excel.metadata.BaseRowModel;
 import lombok.Data;
 
 /**
- * @Description:
+ * @Description:吞卡信息流程的信息DTO
  * @Author: 吴开云
  * @Date: 2019/8/19 0019
  * @Version： 1.0

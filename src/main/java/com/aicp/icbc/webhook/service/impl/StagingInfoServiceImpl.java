@@ -137,7 +137,7 @@ public class StagingInfoServiceImpl implements BusinessService {
             //当匹配到唯一值时,
             //将返回的对象进行key-value赋值
             Map<String, Object> responseContext = new HashMap<>();
-            responseContext.put("cardsNumber", resultList.size());
+            responseContext.put("responseDataSize", resultList.size());
             responseContext.put("passwordMatchFlag", "Y");
             responseContext.put("userName", resultList.get(0).getUserName());
 
@@ -148,7 +148,7 @@ public class StagingInfoServiceImpl implements BusinessService {
         } else if (resultList.size()  > 1 ){
             //当匹配到多个值时
             Map<String, Object> responseContext = new HashMap<>();
-            responseContext.put("cardsNumber", resultList.size());
+            responseContext.put("responseDataSize", resultList.size());
             responseContext.put("passwordMatchFlag", "Y");
             responseContext.put("userName", resultList.get(0).getUserName());
 
@@ -159,7 +159,7 @@ public class StagingInfoServiceImpl implements BusinessService {
         }else if (resultList.size() == 0 ){
             //当匹配不到值时
             Map<String, Object> responseContext = new HashMap<>();
-            responseContext.put("cardsNumber", resultList.size());
+            responseContext.put("responseDataSize", resultList.size());
             responseContext.put("passwordMatchFlag", "N");
 
             //设值返回标志字段
