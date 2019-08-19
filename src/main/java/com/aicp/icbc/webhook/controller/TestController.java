@@ -20,6 +20,6 @@ public class TestController {
 
     @GetMapping("/time")
     public String test(){
-        return " test success  " + LocalDateTime.now();
+        return " test success ~~ " + LocalDateTime.now();
     }
 }
