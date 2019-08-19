@@ -1,9 +1,4 @@
-/**
- * @Description: 账单分期流程-controller
- * @Author: 吴开云
- * @Date: 2019/8/19 0019
- * @Version： 1.0
- */
+
 package com.aicp.icbc.webhook.controller;
 
 import com.aicp.icbc.webhook.rest.ApiResponse;
@@ -24,6 +19,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @Description: 账单分期流程-controller
+ * @Author: 吴开云
+ * @Date: 2019/8/19 0019
+ * @Version： 1.0
+ */
 @RequestMapping(value = "/api/v1/webhook")
 @RestController
 public class StagingWebHookController {
@@ -38,7 +39,7 @@ public class StagingWebHookController {
      * @return
      * @throws IOException
      */
-    @RequestMapping(value = "/customerAuthentication", method = RequestMethod.POST)
+    @RequestMapping(value = "/staging", method = RequestMethod.POST)
     public String getUserByPhoneNumberWithUri(@RequestBody String requestBody) throws IOException{
         // 解析查询请求
         Map<String, Object> request = RequestUtils.getRequest(requestBody);

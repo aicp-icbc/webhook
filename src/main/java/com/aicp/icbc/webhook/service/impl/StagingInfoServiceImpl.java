@@ -79,13 +79,23 @@ public class StagingInfoServiceImpl implements BusinessService {
      */
     private Map<String, Object> getCustomerAuthenticationResult(Map<String, Object> requestContext){
         Map<String, Object> data = new HashMap<>();
+
+        //判断是否输入了密码--未输密码则提前返回
+        String password = (String) requestContext.get("password");
+        if(StringUtils.isEmpty(password)){
+            Map<String, Object> responseContext = new HashMap<>();
+            responseContext.put("api_response_msg", "密码为空");
+            responseContext.put("api_response_status", true);
+            data.put("context", responseContext);
+            return data;
+        }
+        
         //获取全部Excel中的记录
         List<StagingInfoDto> allInfoList = stagingInfoExcelDao.getAllInfoList();
 
         //判断传入的内容是否匹配查询的结果值
         FilterSetterUtil<StagingInfoDto> filterSetterUtil = new FilterSetterUtil<>();
         List<StagingInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList);
-
         //当匹配到值时,
         if (resultList.size() > 0) {
             //将返回的对象进行key-value赋值
@@ -95,7 +105,6 @@ public class StagingInfoServiceImpl implements BusinessService {
             //设值返回标志字段
             responseContext.put("api_response_msg", "匹配数据成功");
             responseContext.put("api_response_status", true);
-            responseContext.put("size",resultList.size());
             data.put("context", responseContext);
         } else if (resultList.size()  == 0 ){
             //当未匹配到值时
