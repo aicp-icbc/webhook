@@ -31,7 +31,7 @@ public class UserInfoExcelDao {
     public List<UserInfoDto> getAllUserInfoList() {
         List<UserInfoDto> userInfoDtoList = new ArrayList<>();
         //访问的classes-路径下的，Excel文件名
-        String fileName = "核身流程-身份信息.xlsx";
+        String fileName = "ICBC-DATA.xlsx";
         //调用easyexcel 访问数据
         try (InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);) {
             AnalysisEventListener<UserInfoDto> listener = new AnalysisEventListener<UserInfoDto>() {
