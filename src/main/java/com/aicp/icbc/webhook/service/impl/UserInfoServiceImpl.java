@@ -56,8 +56,8 @@ public class UserInfoServiceImpl implements BusinessService {
 
             //设置身份证后四位字段值
             String carNumber = resultList.get(0).getCardNumber();
-            String cardNumber1 = carNumber.substring(carNumber.length() - 4, carNumber.length());
-            responseContext.put("cardNumber1", cardNumber1);
+            String cardNumberFour = carNumber.substring(carNumber.length() - 4, carNumber.length());
+            responseContext.put("cardNumberFour", cardNumberFour);
 
             //设值返回标志字段
             responseContext.put("api_response_status", true);
