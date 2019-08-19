@@ -54,6 +54,11 @@ public class UserInfoServiceImpl implements BusinessService {
             //将返回的对象进行key-value赋值
             Map<String, Object> responseContext = filterSetterUtil.setContextValue(resultList.get(0));
 
+            //设置身份证后四位字段值
+            String carNumber = resultList.get(0).getCardNumber();
+            String cardNumber1 = carNumber.substring(carNumber.length() - 4, carNumber.length());
+            responseContext.put("cardNumber1", cardNumber1);
+
             //设值返回标志字段
             responseContext.put("api_response_status", true);
             responseContext.put("size",resultList.size());
