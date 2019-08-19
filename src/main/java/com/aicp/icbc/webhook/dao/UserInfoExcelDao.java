@@ -44,19 +44,18 @@ public class UserInfoExcelDao {
                 }
                 @Override
                 public void doAfterAllAnalysed(AnalysisContext context) {
-//                    System.err.println(fileName + "数据读取完毕..." + "共读取：" + userInfoDtoList.size() + "条数据");
                     log.info(fileName + "数据读取完毕..." + "共读取：" + userInfoDtoList.size() + "条数据");
                 }
             };
             if(fileName.indexOf(".xlsx") > 0){
                 //读取xlsx后缀的Excel内容
                 ExcelReader excelReader = new ExcelReader(in, ExcelTypeEnum.XLSX, null, listener);
-                // 第二个参数为表头行数，按照实际设置
+                // 第一个参数表示sheet页（第几页），第二个参数为表头行数，按照实际设置
                 excelReader.read(new Sheet(1, 1, UserInfoDto.class));
             }else{
                 //读取xls后缀的Excel内容
                 ExcelReader excelReader = new ExcelReader(in, ExcelTypeEnum.XLS, null, listener);
-                // 第二个参数为表头行数，按照实际设置
+                // 第一个参数表示sheet页（第几页），第二个参数为表头行数，按照实际设置
                 excelReader.read(new Sheet(1, 1, UserInfoDto.class));
             }
         } catch (IOException e) {

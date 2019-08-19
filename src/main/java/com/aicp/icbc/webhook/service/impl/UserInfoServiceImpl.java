@@ -19,7 +19,7 @@ import java.util.*;
 @Slf4j
 public class UserInfoServiceImpl implements BusinessService {
     @Autowired
-    UserInfoExcelDao userInfoExcelDao;
+    private UserInfoExcelDao userInfoExcelDao;
 
 
     @Override
@@ -61,11 +61,13 @@ public class UserInfoServiceImpl implements BusinessService {
 
             //设值返回标志字段
             responseContext.put("api_response_status", true);
+            responseContext.put("api_response_msg", "匹配数据成功");
             responseContext.put("size",resultList.size());
             data.put("context", responseContext);
         } else {
             Map<String, Object> responseContext = new HashMap<>();
             responseContext.put("api_response_status", false);
+            responseContext.put("api_response_msg", "无法匹配到记录");
             data.put("context", responseContext);
         }
         return data;
