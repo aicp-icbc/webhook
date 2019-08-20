@@ -22,9 +22,7 @@ import java.util.Map;
  * @Date: 2019/8/19 0019
  * @Version： 1.0
  */
-@RequestMapping(value = "/api/v1/webhook")
-@RestController
-public class CreditCardStagesWebHookController {
+public class CreditCardStagesWebHookController extends BaseWebHookController{
 
     @Autowired
     @Qualifier("CreditCardStagesInfoService")
@@ -37,30 +35,8 @@ public class CreditCardStagesWebHookController {
      * @throws IOException
      */
     @RequestMapping(value = "/creditcardstages", method = RequestMethod.POST)
-    public String getUserByPhoneNumberWithUri(@RequestBody String requestBody) throws IOException{
-        // 解析查询请求
-        Map<String, Object> request = RequestUtils.getRequest(requestBody);
-
-        //进行业务判断,这里判断本请求是否为该会话中涉及的action
-        if (businessService.isServiceBeCalled(request)) {
-            Map<String, Object> resultData = businessService.getResult(request);
-            return ResponseUtil.usccess(resultData);
-        }
-
-        // 没有业务被调用,根据实际需要进行返回,以下只提供参考
-        Map<String, Object> data = new HashMap<>();
-        Map<String, Object> responseContext = new HashMap<>();
-        String value = (String) request.get("value");
-
-        responseContext.put("api_response_msg", "请求匹配action失败");
-        responseContext.put("api_response_status", false);
-        data.put("context", responseContext);
-        if (StringUtils.isNotEmpty(value)) {
-            // 当前节点中配置的value，如果webhook异常将这个话术返回给用户
-            data.put("value", value);
-        }
-
-        return ResponseUtil.serverNotMatch(data);
+    public String getInfo(@RequestBody String requestBody) throws IOException{
+        return super.getInfo(requestBody,businessService);
     }
 
 }

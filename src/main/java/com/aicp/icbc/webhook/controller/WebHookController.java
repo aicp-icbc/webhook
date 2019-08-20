@@ -20,14 +20,14 @@ import java.util.Map;
 
 @RequestMapping(value = "/api/v1/webhook")
 @RestController
-public class WebHookController {
+public class WebHookController extends BaseWebHookController{
 
     private static Logger logger = LoggerFactory.getLogger(WebHookController.class);
     private ApiResponse apiResponse = ApiResponse.getInstance();
 
     @Autowired()
     @Qualifier("UserInfoService")
-    BusinessService userInfoService;
+    BusinessService businessService;
 
     /**
      * 查询核身流程中的用户信息
@@ -36,27 +36,8 @@ public class WebHookController {
      * @throws IOException
      */
     @RequestMapping(value = "/verifyIdentityInfo", method = RequestMethod.POST)
-    public String getUserByPhoneNumberWithUri(@RequestBody String requestBody) throws IOException{
-        // 解析查询请求
-        Map<String, Object> request = RequestUtils.getRequest(requestBody);
-        //进行业务判断,这里判断是否为查询核身流程中的用户信息
-        if (userInfoService.isServiceBeCalled(request)) {
-            Map<String, Object> resultData = userInfoService.getResult(request);
-            return ResponseUtil.usccess(resultData);
-        }
-
-        // 没有业务被调用,根据实际需要进行返回,以下只提供参考
-        Map<String, Object> data = new HashMap<>();
-        Map<String, Object> returnContext = new HashMap<>();
-        String value = (String) request.get("value");
-        returnContext.put("api_response_status", false);
-        data.put("context", returnContext);
-        if (StringUtils.isNotEmpty(value)) {
-            // 当前节点中配置的value，如果webhook异常将这个话术返回给用户
-            data.put("value", value);
-        }
-
-        return ResponseUtil.serverNotMatch(data);
+    public String getInfo(@RequestBody String requestBody) throws IOException{
+        return super.getInfo(requestBody,businessService);
     }
 
 }
