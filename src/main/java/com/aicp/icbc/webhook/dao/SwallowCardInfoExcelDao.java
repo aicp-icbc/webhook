@@ -56,12 +56,12 @@ public class SwallowCardInfoExcelDao {
                 //读取xlsx后缀的Excel内容
                 ExcelReader excelReader = new ExcelReader(in, ExcelTypeEnum.XLSX, null, listener);
                 // 第一个参数表示sheet页（第几页），第二个参数为表头行数，按照实际设置
-                excelReader.read(new Sheet(3, 1, SwallowCardInfoDto.class));
+                excelReader.read(new Sheet(3, 2, SwallowCardInfoDto.class));
             }else{
                 //读取xls后缀的Excel内容
                 ExcelReader excelReader = new ExcelReader(in, ExcelTypeEnum.XLS, null, listener);
                 // 第一个参数表示sheet页（第几页），第二个参数为表头行数，按照实际设置
-                excelReader.read(new Sheet(3, 1, SwallowCardInfoDto.class));
+                excelReader.read(new Sheet(3, 2, SwallowCardInfoDto.class));
             }
         } catch (IOException e) {
             e.printStackTrace();

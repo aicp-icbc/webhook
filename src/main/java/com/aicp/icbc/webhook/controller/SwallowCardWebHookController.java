@@ -28,7 +28,7 @@ public class SwallowCardWebHookController {
 
     @Autowired
     @Qualifier("SwallowCardInfoService")
-    BusinessService swallowCardInfoService;
+    BusinessService businessService;
 
     /**
      * 吞卡流程
@@ -42,8 +42,8 @@ public class SwallowCardWebHookController {
         Map<String, Object> request = RequestUtils.getRequest(requestBody);
 
         //进行业务判断,这里判断本请求是否为该会话中涉及的action
-        if (swallowCardInfoService.isServiceBeCalled(request)) {
-            Map<String, Object> resultData = swallowCardInfoService.getResult(request);
+        if (businessService.isServiceBeCalled(request)) {
+            Map<String, Object> resultData = businessService.getResult(request);
             return ResponseUtil.usccess(resultData);
         }
 

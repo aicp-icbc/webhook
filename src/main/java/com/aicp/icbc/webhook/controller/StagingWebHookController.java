@@ -31,7 +31,7 @@ public class StagingWebHookController {
 
     @Autowired
     @Qualifier("StagingInfoService")
-    BusinessService stagingInfoService;
+    BusinessService businessService;
 
     /**
      * 查询核身流程中的用户信息-带访问路径
@@ -45,8 +45,8 @@ public class StagingWebHookController {
         Map<String, Object> request = RequestUtils.getRequest(requestBody);
 
         //进行业务判断,这里判断本请求是否为该会话中涉及的action
-        if (stagingInfoService.isServiceBeCalled(request)) {
-            Map<String, Object> resultData = stagingInfoService.getResult(request);
+        if (businessService.isServiceBeCalled(request)) {
+            Map<String, Object> resultData = businessService.getResult(request);
             return ResponseUtil.usccess(resultData);
         }
 
