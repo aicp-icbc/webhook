@@ -41,4 +41,9 @@ public class SwallowCardInfoDto extends BaseRowModel {
      * 银行卡后四位
      */
     private String cardNumberFour;
+
+    /**
+     * 银行卡前六位
+     */
+    private String cardNumberPreSix;
 }

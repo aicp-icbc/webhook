@@ -1,4 +1,4 @@
-package com.aicp.icbc.webhook.VO;
+package com.aicp.icbc.webhook.vo;
 
 import lombok.Data;
 

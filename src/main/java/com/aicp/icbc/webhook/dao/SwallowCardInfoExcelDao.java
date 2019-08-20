@@ -40,10 +40,11 @@ public class SwallowCardInfoExcelDao {
                 @Override
                 public void invoke(SwallowCardInfoDto object, AnalysisContext context) {
 //                    System.err.println("Row:" + context.getCurrentRowNum() + "  Data:" + object);
-                    //给卡号后四位赋值
+                    //给卡号后四位赋值 -- 卡号前六位赋值
                     String cardNum = object.getCardNumber();
                     if (!StringUtils.isEmpty(cardNum)){
                         object.setCardNumberFour(cardNum.substring((cardNum.length() - 4), cardNum.length()));
+                        object.setCardNumberPreSix(cardNum.substring(0,6));
                     }
                     infoDtoList.add(object);
                 }

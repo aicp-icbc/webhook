@@ -22,7 +22,7 @@ public class CreditCardStagesInfoDto extends BaseRowModel {
     @ExcelProperty(value = {"性别"}, index = 2)
     private String sex;
 
-    @ExcelProperty(value = {"可分期金额-"}, index = 3)
+    @ExcelProperty(value = {"可分期金额"}, index = 3)
     private String instalment;
 
     @ExcelProperty(value = {"首期本金-3期"}, index = 4)

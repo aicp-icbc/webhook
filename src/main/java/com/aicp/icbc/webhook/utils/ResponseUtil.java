@@ -1,12 +1,10 @@
 package com.aicp.icbc.webhook.utils;
 
-import com.aicp.icbc.webhook.VO.ResponseDataVO;
+import com.aicp.icbc.webhook.vo.ResponseDataVO;
 import com.aicp.icbc.webhook.enums.ResponseStatusEnum;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @Description: 返回信息工具类
