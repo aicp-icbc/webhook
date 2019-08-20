@@ -115,6 +115,11 @@ public class SwallowCardInfoServiceImpl implements BusinessService {
 
         //判断传入的内容是否匹配查询的结果值
         FilterSetterUtil<SwallowCardInfoDto> filterSetterUtil = new FilterSetterUtil<>();
+
+        //吞卡记录可能会传入一个其它的电话号码
+        String queryTelephone = (String)requestContext.get("queryTelephone");
+        requestContext.put("phoneNumber",queryTelephone);
+
         List<SwallowCardInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList);
 
         if (resultList.size() == 1) {
