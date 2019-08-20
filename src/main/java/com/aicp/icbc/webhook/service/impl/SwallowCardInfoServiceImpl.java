@@ -118,7 +118,11 @@ public class SwallowCardInfoServiceImpl implements BusinessService {
 
         //吞卡记录可能会传入一个其它的电话号码
         String queryTelephone = (String)requestContext.get("queryTelephone");
-        requestContext.put("phoneNumber",queryTelephone);
+        //当传入的其它号码不空时，进行替换
+        if(!StringUtils.isEmpty(queryTelephone)){
+            requestContext.remove("queryTelephone");
+            requestContext.put("phoneNumber",queryTelephone);
+        }
 
         List<SwallowCardInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList);
 
