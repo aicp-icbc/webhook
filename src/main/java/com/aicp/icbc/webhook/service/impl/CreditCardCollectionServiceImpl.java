@@ -1,7 +1,7 @@
 package com.aicp.icbc.webhook.service.impl;
 
-import com.aicp.icbc.webhook.dao.UserInfoExcelDao;
-import com.aicp.icbc.webhook.dto.UserInfoDto;
+import com.aicp.icbc.webhook.dao.CreditCardCollectionInfoExcelDao;
+import com.aicp.icbc.webhook.dto.CreditCardCollectionInfoDto;
 import com.aicp.icbc.webhook.service.BusinessService;
 import com.aicp.icbc.webhook.utils.CommonUtils;
 import com.aicp.icbc.webhook.utils.FilterSetterUtil;
@@ -10,16 +10,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 /**
- * @DESC:核身流程server
+ * @DESC: 信用卡催收外呼流程server
  */
-@Service("UserInfoService")
+@Service("CreditCardCollectionService")
 @Slf4j
-public class UserInfoServiceImpl implements BusinessService {
+public class CreditCardCollectionServiceImpl implements BusinessService {
     @Autowired
-    private UserInfoExcelDao userInfoExcelDao;
+    private CreditCardCollectionInfoExcelDao infoExcelDao;
 
 
     @Override
@@ -43,11 +44,11 @@ public class UserInfoServiceImpl implements BusinessService {
         Map<String, Object> data = new HashMap<>();
 
         //获取全部Excel中的记录
-        List<UserInfoDto> allUserInfoList = userInfoExcelDao.getAllUserInfoList();
+        List<CreditCardCollectionInfoDto> allUserInfoList = infoExcelDao.getAllUserInfoList();
 
         //判断传入的内容是否匹配查询的结果值
-        FilterSetterUtil<UserInfoDto> filterSetterUtil = new FilterSetterUtil<>();
-        List<UserInfoDto> resultList = filterSetterUtil.getMatchList(requestContext,allUserInfoList);
+        FilterSetterUtil<CreditCardCollectionInfoDto> filterSetterUtil = new FilterSetterUtil<>();
+        List<CreditCardCollectionInfoDto> resultList = filterSetterUtil.getMatchList(requestContext,allUserInfoList);
 
         //当匹配值不空时
         if (resultList.size() > 0) {
@@ -73,4 +74,31 @@ public class UserInfoServiceImpl implements BusinessService {
         return data;
     }
 
+
+    /**
+     * 通过反射获取字段名，然后判断action是否包含于该服务中
+     * @param action
+     * @return
+     */
+    private Boolean actionContain(String action){
+        Boolean containFlag = false;
+
+        //获取public的字段名
+        Field[] fields = this.getClass().getFields();
+
+        //通过反射进行判断
+        for (Field perField:fields) {
+            try {
+                if (perField.get(this).equals(action)){
+                    containFlag = true;
+                    return containFlag;
+                }
+            }catch (IllegalAccessException e){
+                log.error("{}字段不可访问", perField.getName());
+            }
+        }
+
+        return containFlag;
+    }
+    
 }

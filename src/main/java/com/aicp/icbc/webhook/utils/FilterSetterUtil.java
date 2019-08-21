@@ -1,6 +1,5 @@
 package com.aicp.icbc.webhook.utils;
 
-import com.aicp.icbc.webhook.dto.UserInfoDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 

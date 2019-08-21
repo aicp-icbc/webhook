@@ -5,10 +5,10 @@ import com.alibaba.excel.metadata.BaseRowModel;
 import lombok.Data;
 
 /**
- * @Desc:核实身份流程中的身份信息DTO
+ * @Desc: 信用卡催收外呼流程中的身份信息DTO
  */
 @Data
-public class UserInfoDto extends BaseRowModel {
+public class CreditCardCollectionInfoDto extends BaseRowModel {
     @ExcelProperty(value = {"姓名"}, index = 0)
     private String userName;
 
