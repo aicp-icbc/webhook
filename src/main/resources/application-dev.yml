@@ -6,3 +6,17 @@ server:
 spring:
   application:
     name: icbc-webhook
+
+#打印全部的API接口信息
+#打印请求参数和返回参数信息
+logging:
+  level:
+#    org.springframework.web: TRACE
+    org:
+      springframework:
+        web:
+          servlet:
+            mvc:
+              method:
+                annotation:
+                  RequestResponseBodyMethodProcessor: TRACE

@@ -76,6 +76,15 @@ public class SwallowCardInfoServiceImpl implements BusinessService {
         //获取全部Excel中的记录
         List<SwallowCardInfoDto> allInfoList = swallowCardInfoExcelDao.getAllInfoList();
 
+        //传入主叫号码
+        String callNumber = (String)requestContext.get("callNumber");
+
+        //将主叫号码转换成，phoneNumber进行查找
+        if(!StringUtils.isEmpty(callNumber)){
+            requestContext.remove("callNumber");
+            requestContext.put("phoneNumber",callNumber);
+        }
+
         //判断传入的内容是否匹配查询的结果值
         FilterSetterUtil<SwallowCardInfoDto> filterSetterUtil = new FilterSetterUtil<>();
         List<SwallowCardInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList);
