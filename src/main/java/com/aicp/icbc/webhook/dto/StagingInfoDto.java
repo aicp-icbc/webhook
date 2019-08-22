@@ -30,10 +30,6 @@ public class StagingInfoDto extends BaseRowModel {
     @ExcelProperty(value = {"欠款金额"}, index = 5)
     private String overdraft;
 
-    /**
-     * 是否有欠款记录
-     */
-    private String recordFlag;
 
     /**
      * 密码是否匹配
