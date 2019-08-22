@@ -64,16 +64,6 @@ public class BalanceMindInfoServiceImpl implements BusinessService {
     private Map<String, Object> getCustomerAuthenticationResult(Map<String, Object> requestContext){
         Map<String, Object> data = new HashMap<>();
 
-        //判断是否输入了密码--未输密码则提前返回
-        String password = (String) requestContext.get("password");
-        if(StringUtils.isEmpty(password)){
-            Map<String, Object> responseContext = new HashMap<>();
-            responseContext.put("api_response_msg", "密码为空");
-            responseContext.put("api_response_status", true);
-            data.put("context", responseContext);
-            return data;
-        }
-
         //获取全部Excel中的记录
         List<BalanceMindInfoDto> allInfoList = infoExcelDao.getAllInfoList();
 
@@ -84,7 +74,7 @@ public class BalanceMindInfoServiceImpl implements BusinessService {
         //当匹配到值时,
         if (resultList.size() > 0) {
             //将返回的对象进行key-value赋值
-            Map<String, Object> responseContext = new HashMap<>();
+            Map<String, Object> responseContext = filterSetterUtil.setContextValue(resultList.get(0));
 
             responseContext.put("recordFlag", "Y");
             responseContext.put("responseDataSize",resultList.size());
