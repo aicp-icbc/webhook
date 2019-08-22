@@ -42,7 +42,7 @@ public class BalanceMindInfoDto extends BaseRowModel {
     @ExcelProperty(value = {"起点金额"}, index = 9)
     private String startingAmount;
 
-    @ExcelProperty(value = {"柜面预留手机号"}, index = 9)
+    @ExcelProperty(value = {"柜面预留手机号"}, index = 10)
     private String sysMobile;
 
 
