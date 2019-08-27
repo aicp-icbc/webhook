@@ -22,6 +22,7 @@ public class CreditCardCollectionServiceImpl implements BusinessService {
     @Autowired
     private CreditCardCollectionInfoExcelDao infoExcelDao;
 
+    public final String ACTION_GET_USER_BY_PHONE_NUMBER = "getUserByPhoneNumber";
 
     @Override
     public boolean isServiceBeCalled(Map<String, Object> requestMap) {
@@ -32,7 +33,7 @@ public class CreditCardCollectionServiceImpl implements BusinessService {
         if (StringUtils.isEmpty(action)) {
             return false;
         }
-        if ("getUserByPhoneNumber".equals(action)) {
+        if (this.actionContain(action)) {
             return true;
         }
         return false;
@@ -52,6 +53,7 @@ public class CreditCardCollectionServiceImpl implements BusinessService {
 
         //当匹配值不空时
         if (resultList.size() > 0) {
+
             //将返回的对象进行key-value赋值
             Map<String, Object> responseContext = filterSetterUtil.setContextValue(resultList.get(0));
 
@@ -59,6 +61,13 @@ public class CreditCardCollectionServiceImpl implements BusinessService {
             String carNumber = resultList.get(0).getCardNumber();
             String cardNumberFour = carNumber.substring(carNumber.length() - 4, carNumber.length());
             responseContext.put("cardNumberFour", cardNumberFour);
+            //将男女更改为先生女士
+            String sex = resultList.get(0).getSex();
+            if("男".equals(sex)){
+                responseContext.put("sex","先生");
+            }else if("女".equals(sex)){
+                responseContext.put("sex","女生");
+            }
 
             //设值返回标志字段
             responseContext.put("api_response_status", true);
@@ -74,6 +83,17 @@ public class CreditCardCollectionServiceImpl implements BusinessService {
         return data;
     }
 
+    /**
+     * 1、信用卡分期外呼-核身
+     * @param requestContext
+     * @return
+     */
+    private Map<String, Object> getCreditStagesResult(Map<String, Object> requestContext){
+        Map<String, Object> data = new HashMap<>();
+
+
+        return data;
+    }
 
     /**
      * 通过反射获取字段名，然后判断action是否包含于该服务中
