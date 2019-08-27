@@ -33,13 +33,17 @@ public class CreditCardCollectionInfoExcelDao {
         //访问的classes-路径下的，Excel文件名
         String fileName = "ICBC-DATA.xlsx";
         //调用easyexcel 访问数据
-        try (InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);) {
+        InputStream in = null;
+        try  {
+            //获取输入流
+            in = this.getClass().getClassLoader().getResourceAsStream(fileName);
+
             AnalysisEventListener<CreditCardCollectionInfoDto> listener = new AnalysisEventListener<CreditCardCollectionInfoDto>() {
 
                 //访问，每一行数据
                 @Override
                 public void invoke(CreditCardCollectionInfoDto object, AnalysisContext context) {
-//                    System.err.println("Row:" + context.getCurrentRowNum() + "  Data:" + object);
+                    //System.err.println("Row:" + context.getCurrentRowNum() + "  Data:" + object);
                     infoDtoList.add(object);
                 }
                 @Override
@@ -58,9 +62,16 @@ public class CreditCardCollectionInfoExcelDao {
                 // 第一个参数表示sheet页（第几页），第二个参数为表头行数，按照实际设置
                 excelReader.read(new Sheet(1, 2, CreditCardCollectionInfoDto.class));
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-            log.error("找不到 " + fileName);
+        }  finally {
+            try {
+                //关闭输入流
+                if(in != null){
+                    in.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                log.error("找不到 " + fileName);
+            }
         }
 
         return infoDtoList;
