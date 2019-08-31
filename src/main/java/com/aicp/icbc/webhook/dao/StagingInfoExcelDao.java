@@ -46,8 +46,10 @@ public class StagingInfoExcelDao {
                     //System.err.println("Row:" + context.getCurrentRowNum() + "  Data:" + object);
                     if(object != null && (!StringUtils.isEmpty(object.getCardNumber()))){
                         //去除账户余额前的符号
-                        if(object.getOverdraft().indexOf("-") > 0 || object.getOverdraft().indexOf("+") > 0 ){
-                            object.setOverdraft(object.getOverdraft().substring(1, object.getOverdraft().length()));
+                        if(object.getOverdraft()!= null ){
+                            if(object.getOverdraft().indexOf("-") > 0 || object.getOverdraft().indexOf("+") > 0 ){
+                                object.setOverdraft(object.getOverdraft().substring(1, object.getOverdraft().length()));
+                            }
                         }
                         infoDtoList.add(object);
                     }
