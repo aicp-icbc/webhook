@@ -8,6 +8,7 @@ import com.alibaba.excel.metadata.Sheet;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,7 +44,13 @@ public class StagingInfoExcelDao {
                 @Override
                 public void invoke(StagingInfoDto object, AnalysisContext context) {
                     //System.err.println("Row:" + context.getCurrentRowNum() + "  Data:" + object);
-                    infoDtoList.add(object);
+                    if(object != null && (!StringUtils.isEmpty(object.getCardNumber()))){
+                        //去除账户余额前的符号
+                        if(object.getOverdraft().indexOf("-") > 0 || object.getOverdraft().indexOf("+") > 0 ){
+                            object.setOverdraft(object.getOverdraft().substring(1, object.getOverdraft().length()));
+                        }
+                        infoDtoList.add(object);
+                    }
                 }
                 @Override
                 public void doAfterAllAnalysed(AnalysisContext context) {
@@ -54,12 +61,12 @@ public class StagingInfoExcelDao {
                 //读取xlsx后缀的Excel内容
                 ExcelReader excelReader = new ExcelReader(in, ExcelTypeEnum.XLSX, null, listener);
                 // 第一个参数表示sheet页（第几页），第二个参数为表头行数，按照实际设置
-                excelReader.read(new Sheet(2, 2, StagingInfoDto.class));
+                excelReader.read(new Sheet(2, 3, StagingInfoDto.class));
             }else{
                 //读取xls后缀的Excel内容
                 ExcelReader excelReader = new ExcelReader(in, ExcelTypeEnum.XLS, null, listener);
                 // 第一个参数表示sheet页（第几页），第二个参数为表头行数，按照实际设置
-                excelReader.read(new Sheet(2, 2, StagingInfoDto.class));
+                excelReader.read(new Sheet(2, 3, StagingInfoDto.class));
             }
         }   finally {
             try {

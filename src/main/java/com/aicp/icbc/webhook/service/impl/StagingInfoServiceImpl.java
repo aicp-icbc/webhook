@@ -1,6 +1,7 @@
 package com.aicp.icbc.webhook.service.impl;
 
 import com.aicp.icbc.webhook.dao.StagingInfoExcelDao;
+import com.aicp.icbc.webhook.dto.CreditCardStagesInfoDto;
 import com.aicp.icbc.webhook.dto.StagingInfoDto;
 import com.aicp.icbc.webhook.service.BusinessService;
 import com.aicp.icbc.webhook.utils.CommonUtils;
@@ -29,6 +30,8 @@ public class StagingInfoServiceImpl implements BusinessService {
     public final String ACTION_PASSWORD_VALIDATION = "passwordValidation";
 
     public final String ACTION_GET_OVERDRAFT = "getOverdraft";
+
+    public final String ACTION_GET_CREDIT_RATE = "getCreditRate";
 
 
     @Override
@@ -87,22 +90,20 @@ public class StagingInfoServiceImpl implements BusinessService {
         //当匹配到值时,
         if (resultList.size() > 0) {
             //将返回的对象进行key-value赋值
-            Map<String, Object> responseContext = new HashMap<>();
-            //设置是否有欠款记录
+            Map<String, Object> responseContext = filterSetterUtil.setContextValue(resultList.get(0));
+            //设置查询到记录
             responseContext.put("recordFlag", "Y");
 
             //设值返回标志字段
             responseContext.put("api_response_msg", "匹配数据成功");
-            responseContext.put("api_response_status", true);
             data.put("context", responseContext);
         } else if (resultList.size()  == 0 ){
             //当未匹配到值时
             Map<String, Object> responseContext = new HashMap<>();
-            //设置是否有欠款记录
+            //设置查询到记录
             responseContext.put("recordFlag", "N");
 
             responseContext.put("api_response_msg", "无法匹配到记录");
-            responseContext.put("api_response_status", true);
             data.put("context", responseContext);
         }
         return data;
@@ -201,6 +202,52 @@ public class StagingInfoServiceImpl implements BusinessService {
         return data;
     }
 
+    /**
+     * 4、账单分期-手续费
+     *参数名	字段类型	字段描述
+     * instalment	string	分期金额
+     * PeriodsNO	string	分期期数
+     * @param requestContext
+     * @return
+     */
+    private Map<String, Object> getCreditRateResult(Map<String, Object> requestContext){
+        Map<String, Object> data = new HashMap<>();
+
+        String periodsNO = (String) requestContext.get("PeriodsNO");
+
+        //获取全部Excel中的记录
+        List<StagingInfoDto> allInfoList = stagingInfoExcelDao.getAllInfoList();
+
+        //判断传入的内容是否匹配查询的结果值
+        FilterSetterUtil<StagingInfoDto> filterSetterUtil = new FilterSetterUtil<>();
+        List<StagingInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList);
+
+
+        //当匹配到值时,
+        if (resultList.size()  > 0 ){
+            //设置返回值
+            Map<String, Object> responseContext =
+                    filterSetterUtil.setContextValue(this.getStagesInfoByNumStages(resultList.get(0),periodsNO));
+            //设置查询到记录
+            responseContext.put("recordFlag", "Y");
+
+
+            //设值返回标志字段
+            responseContext.put("api_response_msg", "匹配数据成功");
+            data.put("context", responseContext);
+        }else if (resultList.size() == 0 ){
+            //当匹配不到值时
+            Map<String, Object> responseContext = new HashMap<>();
+            //设置查询到记录
+            responseContext.put("recordFlag", "N");
+
+            //设值返回标志字段
+            responseContext.put("api_response_msg", "无法匹配到记录");
+            data.put("context", responseContext);
+        }
+        return data;
+    }
+
 
 
     /**
@@ -229,4 +276,37 @@ public class StagingInfoServiceImpl implements BusinessService {
         return containFlag;
     }
 
+    /***
+     * 通过反射，判断所选分期数的信息，并赋值
+     * @param dto
+     * @param numberStages
+     * @return
+     */
+    private StagingInfoDto getStagesInfoByNumStages(StagingInfoDto dto, String numberStages){
+        StagingInfoDto result = new StagingInfoDto();
+        //获取两个字段集
+        Field[] fields = dto.getClass().getDeclaredFields();
+        Field[] fieldsSetvalue = result.getClass().getDeclaredFields();
+
+        //根据期数进行对  手续费率%	总手续费	首期总额	各期总额  进行赋值
+        for (Field perField:fields) {
+            perField.setAccessible(true);
+            //判断字段名最后两位是否包含输入的期数
+            if(perField.getName().indexOf(numberStages, perField.getName().length() - 2) > 0){
+                for (Field setValueField:fieldsSetvalue) {
+                    setValueField.setAccessible(true);
+                    try {
+                        //对四个字段进行赋值
+                        if(perField.getName().substring(0,perField.getName().length() -1).matches(setValueField.getName())){
+                            setValueField.set(result,perField.get(dto));
+                        }
+                    }catch (IllegalAccessException e){
+                        log.error("无法访问字段");
+                    }
+                }
+            };
+        }
+        result.setFirstRepaymentDate(dto.getFirstRepaymentDate());
+        return result;
+    }
 }
