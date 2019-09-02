@@ -99,6 +99,9 @@ public class StagingInfoServiceImpl implements BusinessService {
         if (resultList.size() > 0) {
             //将返回的对象进行key-value赋值
             Map<String, Object> responseContext = filterSetterUtil.setContextValue(resultList.get(0));
+            //去除instalment字段
+            responseContext.remove("instalment");
+
             //设置查询到记录
             responseContext.put("recordFlag", "Y");
 
