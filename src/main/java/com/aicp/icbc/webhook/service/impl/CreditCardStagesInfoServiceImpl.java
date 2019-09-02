@@ -12,12 +12,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * @DESC:信用卡分期流程server
+ * @DESC: 信用卡分期外呼流程server
  */
 @Service("CreditCardStagesInfoService")
 @Slf4j
@@ -83,7 +84,9 @@ public class CreditCardStagesInfoServiceImpl implements BusinessService {
 
         //判断传入的内容是否匹配查询的结果值
         FilterSetterUtil<CreditCardStagesInfoDto> filterSetterUtil = new FilterSetterUtil<>();
-        List<CreditCardStagesInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList);
+        //设置本次节点所需要的键（入参变量）
+        List<String> goalKeys = Arrays.asList("phoneNumber");
+        List<CreditCardStagesInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList, goalKeys);
         //当匹配到值时,
         if (resultList.size() > 0) {
             //将返回的对象进行key-value赋值
@@ -119,7 +122,9 @@ public class CreditCardStagesInfoServiceImpl implements BusinessService {
 
         //判断传入的内容是否匹配查询的结果值
         FilterSetterUtil<CreditCardStagesInfoDto> filterSetterUtil = new FilterSetterUtil<>();
-        List<CreditCardStagesInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList);
+        //设置本次节点所需要的键（入参变量）
+        List<String> goalKeys = Arrays.asList("userName","numberStages");
+        List<CreditCardStagesInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList, goalKeys);
 
         //获取分期数
         String numberStages = (String) requestContext.get("numberStages");
