@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @DESC:账单分期流程server
+ * @DESC:收不到余额变动提醒流程server
  */
 @Service("BalanceMindInfoService")
 @Slf4j
