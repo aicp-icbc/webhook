@@ -45,11 +45,13 @@ public class CreditCardCollectionServiceImpl implements BusinessService {
         Map<String, Object> data = new HashMap<>();
 
         //获取全部Excel中的记录
-        List<CreditCardCollectionInfoDto> allUserInfoList = infoExcelDao.getAllUserInfoList();
+        List<CreditCardCollectionInfoDto> allInfoList = infoExcelDao.getAllUserInfoList();
 
         //判断传入的内容是否匹配查询的结果值
         FilterSetterUtil<CreditCardCollectionInfoDto> filterSetterUtil = new FilterSetterUtil<>();
-        List<CreditCardCollectionInfoDto> resultList = filterSetterUtil.getMatchList(requestContext,allUserInfoList);
+        //设置本次节点所需要的键（入参变量）
+        List<String> goalKeys = Arrays.asList("phoneNumber");
+        List<CreditCardCollectionInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList, goalKeys);
 
         //当匹配值不空时
         if (resultList.size() > 0) {
