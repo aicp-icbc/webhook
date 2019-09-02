@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +80,9 @@ public class AdjustmentInfoServiceImpl implements BusinessService {
 
         //判断传入的内容是否匹配查询的结果值
         FilterSetterUtil<AdjustmentInfoDto> filterSetterUtil = new FilterSetterUtil<>();
-        List<AdjustmentInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList);
+        //设置本次节点所需要的键（入参变量）
+        List<String> goalKeys = Arrays.asList("cardNum");
+        List<AdjustmentInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList, goalKeys);
         //当匹配到值时,
         if (resultList.size() > 0) {
             //将返回的对象进行key-value赋值
