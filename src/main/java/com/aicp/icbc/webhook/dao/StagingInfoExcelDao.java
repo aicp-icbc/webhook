@@ -47,8 +47,8 @@ public class StagingInfoExcelDao {
                     if(object != null && (!StringUtils.isEmpty(object.getCardNumber()))){
                         //去除账户余额前的符号
                         if(object.getOverdraft()!= null ){
-                            if(object.getOverdraft().indexOf("-") > 0 || object.getOverdraft().indexOf("+") > 0 ){
-                                object.setOverdraft(object.getOverdraft().substring(1, object.getOverdraft().length()));
+                            if(object.getOverdraft().startsWith("-")){
+                                object.setOverdraft(object.getOverdraft().replaceAll("-",""));
                             }
                         }
                         infoDtoList.add(object);
