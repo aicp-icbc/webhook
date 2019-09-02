@@ -7,10 +7,10 @@ MAINTAINER wukaiyun <kaiyun.wu@qq.com>
 LABEL Description="WeebHook For AICP - ICBC"  Version="latest"
 
 #共享数据
-VOLUME /log
+#VOLUME /log
 
 #WORKDIR指令用于指定容器的一个目录， 容器启动时执行的命令会在该目录下执行。
-WORKDIR /dock
+#WORKDIR /docker
 
 #将jar包 添加为webhook.jar
 ADD webhook-0.0.1-SNAPSHOT.jar webhook.jar
