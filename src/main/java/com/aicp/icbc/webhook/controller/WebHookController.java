@@ -43,6 +43,10 @@ public class WebHookController extends BaseWebHookController{
     @Qualifier("SwallowCardInfoService")
     BusinessService swallowCardInfoService;
 
+    @Autowired
+    @Qualifier("AdjustmentInfoService")
+    BusinessService adjustmentInfoService;
+
     /**
      * 获取返回值结果
      * @param requestBody
