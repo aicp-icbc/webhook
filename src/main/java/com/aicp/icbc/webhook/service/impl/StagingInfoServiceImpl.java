@@ -231,7 +231,7 @@ public class StagingInfoServiceImpl implements BusinessService {
         //设置本次节点所需要的键（入参变量）
         List<String> goalKeys = Arrays.asList("instalment");
         List<StagingInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList, goalKeys);
-        
+
         //当匹配到值时,
         if (resultList.size()  > 0 ){
             //设置返回值
