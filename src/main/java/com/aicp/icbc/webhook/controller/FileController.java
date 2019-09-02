@@ -36,14 +36,14 @@ public class FileController {
         for (Part perPart:parts) {
             //获取输入文件名
             String name = perPart.getSubmittedFileName();
-            filePath += name + "  ";
             //获取classPath路径--利用配置文件
-            String path = this.getClass().getClassLoader().getResource("application.yml").getPath();
+            String path = this.getClass().getClassLoader().getResource("repalaceFileName.txt").getPath();
             //替换目标文件名
-            path.replace("application.yml",name);
+            String goalPath = path.replace("repalaceFileName.txt",name);
             //获取输入流和输入流
             InputStream input = perPart.getInputStream();
-            FileOutputStream fos = new FileOutputStream(path);
+            FileOutputStream fos = new FileOutputStream(goalPath);
+            filePath += goalPath + "\t";
             //读取文件并写出
             while ((size = input.read(buffer,0,1024)) != -1) {
                 fos.write(buffer, 0, size);
@@ -56,6 +56,6 @@ public class FileController {
             }
             //perPart.write(name);
         }
-        return "success updata: " + filePath;
+        return "success updata:\t" + filePath;
     }
 }
