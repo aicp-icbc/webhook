@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +75,9 @@ public class BalanceMindInfoServiceImpl implements BusinessService {
 
         //判断传入的内容是否匹配查询的结果值
         FilterSetterUtil<BalanceMindInfoDto> filterSetterUtil = new FilterSetterUtil<>();
-        List<BalanceMindInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList);
+        //设置本次节点所需要的键（入参变量）
+        List<String> goalKeys = Arrays.asList("userName");
+        List<BalanceMindInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList, goalKeys);
 
         //当匹配到值时,
         if (resultList.size() > 0) {
@@ -121,7 +124,9 @@ public class BalanceMindInfoServiceImpl implements BusinessService {
 
         //判断传入的内容是否匹配查询的结果值
         FilterSetterUtil<BalanceMindInfoDto> filterSetterUtil = new FilterSetterUtil<>();
-        List<BalanceMindInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList);
+        //设置本次节点所需要的键（入参变量）
+        List<String> goalKeys = Arrays.asList("sysDate", "userName");
+        List<BalanceMindInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList, goalKeys);
 
 
         //当匹配到值时,
