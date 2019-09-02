@@ -34,115 +34,113 @@ public class StagingInfoDto extends BaseRowModel {
     private String cardType;
 
     @ExcelProperty(value = {"账户余额"}, index = 7)
-    private String Overdraft;
+    private String overdraft;
 
     @ExcelProperty(value = {"欠款币种"}, index = 8)
-    private String Currency;
+    private String currency;
 
     @ExcelProperty(value = {"可分期金额"}, index = 9)
     private String instalment;
 
     @ExcelProperty(value = {"首次扣款时间"}, index = 10)
-    private String FirstRepaymentDate;
+    private String firstRepaymentDate;
 
     @ExcelProperty(value = {"当前账户额度"}, index = 11)
-    private String MaxInstalment;
+    private String maxInstalment;
 
     @ExcelProperty(value = {"分期后剩余额度"}, index = 12)
     private String remainingAmount;
 
     @ExcelProperty(value = {"首期本金-3期"}, index = 13)
-    private String ServiceChargeFate3;
+    private String serviceChargeFate3;
 
     @ExcelProperty(value = {"月均需还本金-3期"}, index = 14)
-    private String ServiceCharge3;
+    private String serviceCharge3;
 
     @ExcelProperty(value = {"首期需还手续费-3期"}, index = 15)
-    private String FirstRepaymentMoney3;
+    private String firstRepaymentMoney3;
 
     @ExcelProperty(value = {"月均需还手续费-3期"}, index = 16)
-    private String RepaymentMoney3;
+    private String repaymentMoney3;
 
     @ExcelProperty(value = {"首期本金-6期"}, index = 17)
-    private String ServiceChargeFate6;
+    private String serviceChargeFate6;
 
     @ExcelProperty(value = {"月均需还本金-6期"}, index = 18)
-    private String ServiceCharge6;
+    private String serviceCharge6;
 
     @ExcelProperty(value = {"首期需还手续费-6期"}, index = 19)
-    private String FirstRepaymentMoney6;
+    private String firstRepaymentMoney6;
 
     @ExcelProperty(value = {"月均需还手续费-6期"}, index = 20)
-    private String RepaymentMoney6;
+    private String repaymentMoney6;
 
     @ExcelProperty(value = {"首期本金-9期"}, index = 21)
-    private String ServiceChargeFate9;
+    private String serviceChargeFate9;
 
     @ExcelProperty(value = {"月均需还本金-9期"}, index = 22)
-    private String ServiceCharge9;
+    private String serviceCharge9;
 
     @ExcelProperty(value = {"首期需还手续费-9期"}, index = 23)
-    private String FirstRepaymentMoney9;
+    private String firstRepaymentMoney9;
 
     @ExcelProperty(value = {"月均需还手续费-9期"}, index = 24)
-    private String RepaymentMoney9;
+    private String repaymentMoney9;
 
     @ExcelProperty(value = {"首期本金-12期"}, index = 25)
-    private String ServiceChargeFate12;
+    private String serviceChargeFate12;
 
     @ExcelProperty(value = {"月均需还本金-12期"}, index = 26)
-    private String ServiceCharge12;
+    private String serviceCharge12;
 
     @ExcelProperty(value = {"首期需还手续费-12期"}, index = 27)
-    private String FirstRepaymentMoney12;
+    private String firstRepaymentMoney12;
 
     @ExcelProperty(value = {"月均需还手续费-12期"}, index = 28)
-    private String RepaymentMoney12;
+    private String repaymentMoney12;
 
     @ExcelProperty(value = {"首期本金-18期"}, index = 29)
-    private String ServiceChargeFate18;
+    private String serviceChargeFate18;
 
     @ExcelProperty(value = {"月均需还本金-18期"}, index = 30)
-    private String ServiceCharge18;
+    private String serviceCharge18;
 
     @ExcelProperty(value = {"首期需还手续费-18期"}, index = 31)
-    private String FirstRepaymentMoney18;
+    private String firstRepaymentMoney18;
 
     @ExcelProperty(value = {"月均需还手续费-18期"}, index = 32)
-    private String RepaymentMoney18;
+    private String repaymentMoney18;
 
     @ExcelProperty(value = {"首期本金-24期"}, index = 33)
-    private String ServiceChargeFate24;
+    private String serviceChargeFate24;
 
     @ExcelProperty(value = {"月均需还本金-24期"}, index = 34)
-    private String ServiceCharge24;
+    private String serviceCharge24;
 
     @ExcelProperty(value = {"首期需还手续费-24期"}, index = 35)
-    private String FirstRepaymentMoney24;
+    private String firstRepaymentMoney24;
 
     @ExcelProperty(value = {"月均需还手续费-24期"}, index = 36)
-    private String RepaymentMoney24;
-
+    private String repaymentMoney24;
 
     /**
      * 首期本金
      */
-    private String ServiceChargeFate;
+    private String serviceChargeFate;
 
     /**
      * 月均需还本金
      */
-    private String ServiceCharge;
+    private String serviceCharge;
 
     /**
      * 首期需还手续费
      */
-    private String FirstRepaymentMoney;
+    private String firstRepaymentMoney;
 
     /**
      * 月均需还手续费
      */
-    private String RepaymentMoney;
-
+    private String repaymentMoney;
 
 }

@@ -69,6 +69,11 @@ public class StagingInfoServiceImpl implements BusinessService {
             return this.getOverdraftResult(requestContext);
         }
 
+        //4、账单分期-手续费
+        if(this.ACTION_GET_CREDIT_RATE.equals(action)){
+            return this.getCreditRateResult(requestContext);
+        }
+
         return new HashMap<>();
     }
 
@@ -226,9 +231,11 @@ public class StagingInfoServiceImpl implements BusinessService {
         //当匹配到值时,
         if (resultList.size()  > 0 ){
             //设置返回值
+            StagingInfoDto stagingInfoDto = this.getStagesInfoByNumStages(resultList.get(0),periodsNO);
             Map<String, Object> responseContext =
-                    filterSetterUtil.setContextValue(this.getStagesInfoByNumStages(resultList.get(0),periodsNO));
+                    filterSetterUtil.setContextValue(stagingInfoDto);
             //设置查询到记录
+
             responseContext.put("recordFlag", "Y");
 
 
