@@ -21,7 +21,7 @@ public class AdjustmentInfoDto extends BaseRowModel {
     private String cardNum;
 
     @ExcelProperty(value = {"密码"}, index = 3)
-    private Integer password1;
+    private String password1;
 
     @ExcelProperty(value = {"当前卡片额度"}, index = 4)
     private Integer sDefineCredit;
@@ -77,11 +77,11 @@ public class AdjustmentInfoDto extends BaseRowModel {
         this.cardNum = cardNum;
     }
 
-    public Integer getPassword1() {
+    public String getPassword1() {
         return password1;
     }
 
-    public void setPassword1(Integer password1) {
+    public void setPassword1(String password1) {
         this.password1 = password1;
     }
 
