@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,7 +88,9 @@ public class SwallowCardInfoServiceImpl implements BusinessService {
 
         //判断传入的内容是否匹配查询的结果值
         FilterSetterUtil<SwallowCardInfoDto> filterSetterUtil = new FilterSetterUtil<>();
-        List<SwallowCardInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList);
+        //设置本次节点所需要的键（入参变量）
+        List<String> goalKeys = Arrays.asList("callNumber");
+        List<SwallowCardInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList, goalKeys);
         //当匹配到值时,
         if (resultList.size() > 0) {
             //将返回的对象进行key-value赋值
@@ -133,7 +136,10 @@ public class SwallowCardInfoServiceImpl implements BusinessService {
             requestContext.put("phoneNumber",queryTelephone);
         }
 
-        List<SwallowCardInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList);
+        //设置本次节点所需要的键（入参变量）
+        List<String> goalKeys = Arrays.asList("cardNumber","cardNumberFour","eatTime",
+                "eatLocation","queryTelephone","idCardNumber");
+        List<SwallowCardInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList, goalKeys);
 
         if (resultList.size() == 1) {
             //当匹配到唯一值时,
