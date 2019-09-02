@@ -26,6 +26,8 @@ public class BalanceMindInfoServiceImpl implements BusinessService {
 
     public final String ACTION_GET_BALANCE_MIND_INFO = "getBalanceMindInfo";
 
+    public final String ACTION_GET_BALANCE_MIND_SYSDATE = "getBalanceMindSysdate";
+
 
     @Override
     public boolean isServiceBeCalled(Map<String, Object> requestMap) {
@@ -47,21 +49,24 @@ public class BalanceMindInfoServiceImpl implements BusinessService {
         Map<String, Object> requestContext = (Map<String, Object>) requestMap.get("context");
         //判断请求的action类别
         String action = (String) requestMap.get("action");
-        //1、账单分期-客户身份验证
+        //1、客户信息获取
         if(this.ACTION_GET_BALANCE_MIND_INFO.equals(action)){
-            return this.getCustomerAuthenticationResult(requestContext);
+            return this.getBalanceMindInfoResult(requestContext);
+        }
+        //2、日期记录验证
+        if(this.ACTION_GET_BALANCE_MIND_SYSDATE.equals(action)){
+            return this.getBalanceMindSysdateResult(requestContext);
         }
 
         return new HashMap<>();
     }
 
     /**
-     * 1、账单分期-客户身份验证
-     *如果主叫号码不存在记录，则返回N, 存在返回Y
+     * 1、收不到余额提醒--获取列表行信息
      * @param requestContext
      * @return
      */
-    private Map<String, Object> getCustomerAuthenticationResult(Map<String, Object> requestContext){
+    private Map<String, Object> getBalanceMindInfoResult(Map<String, Object> requestContext){
         Map<String, Object> data = new HashMap<>();
 
         //获取全部Excel中的记录
@@ -70,6 +75,54 @@ public class BalanceMindInfoServiceImpl implements BusinessService {
         //判断传入的内容是否匹配查询的结果值
         FilterSetterUtil<BalanceMindInfoDto> filterSetterUtil = new FilterSetterUtil<>();
         List<BalanceMindInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList);
+
+        //当匹配到值时,
+        if (resultList.size() > 0) {
+            //将返回的对象进行key-value赋值
+            Map<String, Object> responseContext = filterSetterUtil.setContextValue(resultList.get(0));
+
+            responseContext.put("recordFlag", "Y");
+            responseContext.put("responseDataSize",resultList.size());
+
+            //设值返回标志字段
+            responseContext.put("api_response_msg", "匹配数据成功");
+            responseContext.put("api_response_status", true);
+            data.put("context", responseContext);
+        } else if (resultList.size()  == 0 ){
+            //当未匹配到值时
+            Map<String, Object> responseContext = new HashMap<>();
+            responseContext.put("recordFlag", "N");
+            responseContext.put("responseDataSize",resultList.size());
+
+            //设值返回标志字段
+            responseContext.put("api_response_msg", "无法匹配到记录");
+            responseContext.put("api_response_status", true);
+            data.put("context", responseContext);
+        }
+        return data;
+    }
+
+    /**
+     * 2、收不到余额提醒--判读日期是否存在记录
+     *不存在记录，则返回N, 存在返回Y
+     * @param requestContext
+     * @return
+     */
+    private Map<String, Object> getBalanceMindSysdateResult(Map<String, Object> requestContext){
+        Map<String, Object> data = new HashMap<>();
+
+        //第二次验证交易记录日期字段
+        String jyjlrq = (String)requestContext.get("jyjlrq");
+        //替换原本的日志字段
+        requestContext.put("sysDate",jyjlrq);
+
+        //获取全部Excel中的记录
+        List<BalanceMindInfoDto> allInfoList = infoExcelDao.getAllInfoList();
+
+        //判断传入的内容是否匹配查询的结果值
+        FilterSetterUtil<BalanceMindInfoDto> filterSetterUtil = new FilterSetterUtil<>();
+        List<BalanceMindInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList);
+
 
         //当匹配到值时,
         if (resultList.size() > 0) {
