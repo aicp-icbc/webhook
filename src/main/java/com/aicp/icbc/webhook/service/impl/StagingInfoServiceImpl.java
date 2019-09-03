@@ -310,10 +310,15 @@ public class StagingInfoServiceImpl implements BusinessService {
                 for (Field setValueField:fieldsSetvalue) {
                     setValueField.setAccessible(true);
                     try {
-                        //对四个字段进行赋值
-                        if(perField.getName().substring(0,perField.getName().length() -1).matches(setValueField.getName())){
+                        //对四个字段非表进行赋值 --- 传入的期数为1位数
+                        if(perField.getName().substring(0,perField.getName().length() - 1).matches(setValueField.getName())){
                             setValueField.set(result,perField.get(dto));
                         }
+                        //对四个字段非表进行赋值 --- 传入的期数为2位数
+                        if(perField.getName().substring(0,perField.getName().length() - 2).matches(setValueField.getName())){
+                            setValueField.set(result,perField.get(dto));
+                        }
+
                     }catch (IllegalAccessException e){
                         log.error("无法访问字段");
                     }

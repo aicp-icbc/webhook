@@ -198,7 +198,12 @@ public class CreditCardStagesInfoServiceImpl implements BusinessService {
                 for (Field setValueField:fieldsSetvalue) {
                     setValueField.setAccessible(true);
                     try {
+                        //对四个非表字段进行赋值 --- 传入的期数为1位数
                         if(perField.getName().substring(0,perField.getName().length() -1).matches(setValueField.getName())){
+                            setValueField.set(result,perField.get(dto));
+                        }
+                        //对四个非表字段进行赋值 --- 传入的期数为2位数
+                        if(perField.getName().substring(0,perField.getName().length() -2).matches(setValueField.getName())){
                             setValueField.set(result,perField.get(dto));
                         }
                     }catch (IllegalAccessException e){
