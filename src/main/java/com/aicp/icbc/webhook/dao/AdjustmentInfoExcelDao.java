@@ -45,8 +45,8 @@ public class AdjustmentInfoExcelDao {
                 @Override
                 public void invoke(AdjustmentInfoDto object, AnalysisContext context) {
                     //System.err.println("Row:" + context.getCurrentRowNum() + "  Data:" + object);
-                    String regEx="[^0-9]";
-                    Pattern p = Pattern.compile(regEx);
+//                    String regEx="[^0-9]";
+//                    Pattern p = Pattern.compile(regEx);
                     if(object != null && (!StringUtils.isEmpty(object))){
                         //截取数字部分
 //                        if(object.getQuotaMax().matches("[0-9]{1,}") ){
