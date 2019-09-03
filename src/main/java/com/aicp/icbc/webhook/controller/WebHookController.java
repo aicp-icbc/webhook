@@ -47,6 +47,10 @@ public class WebHookController extends BaseWebHookController{
     @Qualifier("AdjustmentInfoService")
     BusinessService adjustmentInfoService;
 
+    @Autowired
+    @Qualifier("HelperInfoService")
+    BusinessService helperInfoService;
+
     /**
      * 获取返回值结果
      * @param requestBody

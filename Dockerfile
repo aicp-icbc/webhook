@@ -6,11 +6,11 @@ MAINTAINER wukaiyun <kaiyun.wu@qq.com>
 
 LABEL Description="WeebHook For AICP - ICBC"  Version="latest"
 
-#共享数据
-#VOLUME /log
+#docker容器间共享的数据存放文件夹
+VOLUME /home
 
 #WORKDIR指令用于指定容器的一个目录， 容器启动时执行的命令会在该目录下执行。
-#WORKDIR /docker
+WORKDIR /home
 
 #将jar包 添加为webhook.jar
 ADD webhook-0.0.1-SNAPSHOT.jar webhook.jar
@@ -22,4 +22,4 @@ EXPOSE 8899
 #CMD java -jar webhook.jar
 
 #容器启动后，最终执行的命令
-ENTRYPOINT java -jar webhook.jar
+ENTRYPOINT java -jar webhook.jar --spring.profiles.active=dev
