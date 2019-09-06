@@ -12,10 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @DESC:吞卡流程server
@@ -29,6 +26,10 @@ public class SwallowCardInfoServiceImpl implements BusinessService {
     public final String ACTION_CARD_RECORD = "cardRecord";
 
     public final String ACTION_CHECK_CARD_RECORD = "checkCardRecord";
+
+    public final String ACTION_IVR_CARD_RECORD = "IVRcardRecord";
+
+    public final String ACTION_IVR_CHECK_CARD_RECORD = "IVRcheckCardRecord";
 
     @Override
     public boolean isServiceBeCalled(Map<String, Object> requestMap) {
@@ -58,6 +59,15 @@ public class SwallowCardInfoServiceImpl implements BusinessService {
         //2、吞卡-吞卡记录核对
         if(this.ACTION_CHECK_CARD_RECORD.equals(action)){
             return this.getPasswordValidationResult(requestContext);
+        }
+        //1、吞卡-吞卡记录查询 -- IVR(语音渠道)
+        if(this.ACTION_IVR_CARD_RECORD.equals(action)){
+            return this.getIVRCardRecordResult(requestContext);
+        }
+
+        //2、吞卡-吞卡记录核对 -- IVR(语音渠道)
+        if(this.ACTION_IVR_CHECK_CARD_RECORD.equals(action)){
+            return this.getIVRPasswordValidationResult(requestContext);
         }
 
 
@@ -124,6 +134,135 @@ public class SwallowCardInfoServiceImpl implements BusinessService {
         Map<String, Object> data = new HashMap<>();
         //获取全部Excel中的记录
         List<SwallowCardInfoDto> allInfoList = swallowCardInfoExcelDao.getAllInfoList();
+
+        //判断传入的内容是否匹配查询的结果值
+        FilterSetterUtil<SwallowCardInfoDto> filterSetterUtil = new FilterSetterUtil<>();
+
+        //吞卡记录可能会传入一个其它的电话号码
+        String queryTelephone = (String)requestContext.get("queryTelephone");
+        //当传入的其它号码不空时，进行替换
+        if(!StringUtils.isEmpty(queryTelephone)){
+            requestContext.remove("queryTelephone");
+            requestContext.put("phoneNumber",queryTelephone);
+        }
+
+        //设置本次节点所需要的键（入参变量）
+        List<String> goalKeys = Arrays.asList("cardNumber","cardNumberFour","eatTime",
+                "eatLocation","queryTelephone","idCardNumber");
+        List<SwallowCardInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList, goalKeys);
+
+        if (resultList.size() == 1) {
+            //当匹配到唯一值时,
+            //将返回的对象进行key-value赋值
+            Map<String, Object> responseContext = filterSetterUtil.setContextValue(resultList.get(0));
+            responseContext.put("responseDataSize", resultList.size());
+
+            //设值返回标志字段
+            responseContext.put("api_response_msg", "匹配数据成功");
+            responseContext.put("api_response_status", true);
+            data.put("context", responseContext);
+        } else if (resultList.size()  > 1 ){
+            //当匹配到多个值时
+            Map<String, Object> responseContext = new HashMap<>();
+
+            //将每个值的键加上index后缀
+            for (Integer i = 0; i < resultList.size() ; i ++) {
+                SwallowCardInfoDto perDto = resultList.get(i);
+                String indexStr = i == 0 ? "" : i.toString();
+                Map<String, Object> perContext = new HashMap<>();
+
+                //取所有定义字段
+                Field[] fields = perDto.getClass().getDeclaredFields();
+
+                //判断字段值是否为空
+                for (Field perField:fields) {
+                    perField.setAccessible(true);
+                    try {
+                        if(!StringUtils.isEmpty(perField.get(perDto))){
+                            //取非空字段进行 key，value赋值
+                            perContext.put(perField.getName() + indexStr, perField.get(perDto));
+                        }
+                    }catch (IllegalAccessException e){
+                        e.printStackTrace();
+                        log.error("无法访问字段");
+                    }
+                }
+                //将所有的key，value值放进返回的context中
+                responseContext.putAll(perContext);
+            }
+            responseContext.put("responseDataSize", resultList.size());
+
+            //设值返回标志字段
+            responseContext.put("api_response_msg", "匹配数据成功");
+            responseContext.put("api_response_status", true);
+            data.put("context", responseContext);
+        }else if (resultList.size() == 0 ){
+            //当匹配不到值时
+            Map<String, Object> responseContext = new HashMap<>();
+            responseContext.put("responseDataSize", resultList.size());
+
+            //设值返回标志字段
+            responseContext.put("api_response_status", true);
+            responseContext.put("api_response_msg", "无法匹配到记录");
+            data.put("context", responseContext);
+        }
+        return data;
+    }
+
+    /**
+     * 1、吞卡-吞卡记录查询--IVR
+     *是否存在吞卡记录（Y/N）
+     * 如果主叫号码不存在记录，则返回N
+     * @param requestContext
+     * @return
+     */
+    private Map<String, Object> getIVRCardRecordResult(Map<String, Object> requestContext){
+        Map<String, Object> data = new HashMap<>();
+
+        //获取行方接口的记录
+        String cardNo = (String) requestContext.get("cardNo");
+        List<SwallowCardInfoDto> allInfoList = Arrays.asList(swallowCardInfoExcelDao.getFromBank(cardNo));
+
+        //判断传入的内容是否匹配查询的结果值
+        FilterSetterUtil<SwallowCardInfoDto> filterSetterUtil = new FilterSetterUtil<>();
+        //设置本次节点所需要的键（入参变量）
+        List<String> goalKeys = Arrays.asList("cardNo");
+        List<SwallowCardInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList, goalKeys);
+        //当匹配到值时,
+        if (resultList.size() > 0) {
+            //将返回的对象进行key-value赋值
+            Map<String, Object> responseContext = new HashMap<>();
+            responseContext.put("recordFlag", "Y");
+
+            //设值返回标志字段
+            responseContext.put("api_response_msg", "匹配数据成功");
+            responseContext.put("api_response_status", true);
+            data.put("context", responseContext);
+        } else if (resultList.size()  == 0 ){
+            //当未匹配到值时
+            Map<String, Object> responseContext = new HashMap<>();
+            responseContext.put("recordFlag", "N");
+
+            responseContext.put("api_response_msg", "无法匹配到记录");
+            responseContext.put("api_response_status", true);
+            data.put("context", responseContext);
+        }
+        return data;
+    }
+
+
+    /**
+     * 2、吞卡-吞卡记录核对 -- IVR
+     *卡号,卡号后四位,吞卡时间,吞卡位置,四个参数至少存在一个
+     * @param requestContext
+     * @return
+     */
+    private Map<String, Object> getIVRPasswordValidationResult(Map<String, Object> requestContext){
+        Map<String, Object> data = new HashMap<>();
+
+        //获取行方接口的记录
+        String cardNo = (String) requestContext.get("cardNo");
+        List<SwallowCardInfoDto> allInfoList = Arrays.asList(swallowCardInfoExcelDao.getFromBank(cardNo));
 
         //判断传入的内容是否匹配查询的结果值
         FilterSetterUtil<SwallowCardInfoDto> filterSetterUtil = new FilterSetterUtil<>();

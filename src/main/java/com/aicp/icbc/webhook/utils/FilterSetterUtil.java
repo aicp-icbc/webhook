@@ -108,6 +108,24 @@ public class FilterSetterUtil<T> {
     }
 
     /**
+     * 根据字段名和字段值传递保存至dto中
+     * @param fildName
+     * @param fileValue
+     * @param dto
+     * @return
+     */
+    public T seDtoValue(String fildName, Object fileValue, T dto){
+        try {
+            Field field = dto.getClass().getDeclaredField(fildName);
+            field.setAccessible(true);
+            field.set(dto,fileValue);
+        }catch (Exception e){
+        }
+        return dto;
+    }
+
+
+    /**
      * 将传递的对象中，所有的属性，赋值在map中，以(字段名，字段值)的方式。
      * @param object
      * @return

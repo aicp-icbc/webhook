@@ -73,7 +73,6 @@ public class WebHookController extends BaseWebHookController{
     private BusinessService checkService(String requestBody) throws IOException{
         //获取request的key-value map
         Map<String, Object> request = RequestUtils.getRequest(requestBody);
-
         //获取定义的service对象
         Field[] fields = this.getClass().getDeclaredFields();
         for (Field perField : fields) {

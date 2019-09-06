@@ -1,12 +1,19 @@
 package com.aicp.icbc.webhook.dao;
 
 import com.aicp.icbc.webhook.dto.SwallowCardInfoDto;
+import com.aicp.icbc.webhook.utils.FilterSetterUtil;
+import com.aicp.icbc.webhook.utils.RequestUtils;
+import com.aicp.icbc.webhook.xmlVO.SwallowCardInfoVo;
 import com.alibaba.excel.ExcelReader;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.excel.metadata.Sheet;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -82,5 +89,50 @@ public class SwallowCardInfoExcelDao {
         }
 
         return infoDtoList;
+    }
+
+    /**
+     * 访问行方接口，获取数据
+     * @return
+     */
+    public SwallowCardInfoDto getFromBank(String cardNo){
+        String from = "S_SWALLOW_CARD";
+//        String cardNo = "6222020100123456789";
+        String result = RequestUtils.loadXmlStrFromBank(from, cardNo);
+
+        Document document = null;
+        try {
+            document = DocumentHelper.parseText(result);
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
+        //获取顶层节点 -- 行方默认为CC
+        Element element = document.getRootElement();
+        //获取目标子节点
+        Element RC = element.element("OUT").element("RESULT").element("RC");
+        List<Element> rcList = RC.elements();
+        //对VO实体进行赋值
+        SwallowCardInfoVo vo = new SwallowCardInfoVo();
+        FilterSetterUtil<SwallowCardInfoVo> filterSetterUtil = new FilterSetterUtil<>();
+        //循环遍历xml节点
+        for (Element perElement:rcList) {
+            String nodeName = perElement.getName();
+            String nodeStr = (String) perElement.getData();
+            filterSetterUtil.seDtoValue(nodeName, nodeStr,vo);
+            System.out.println(nodeName + nodeStr + vo);
+        }
+        //对DTO实体进行赋值
+        SwallowCardInfoDto dto = new SwallowCardInfoDto();
+        dto.setUserName(vo.getNAME());
+        dto.setCardNumber(vo.getCARDNO());
+        dto.setBank(vo.getEXTREMELY_LOCATION());
+        dto.setEatLocation(vo.getEXTREMELY_LOCATION());
+        dto.setEatTime(vo.getSWALLOW_TIME());
+        dto.setMachineNum(vo.getEXTREMELYNO());
+        dto.setPhoneNumber(vo.getCONTACT_NUMBER());
+        dto.setIdCardNumber(vo.getIDNUMBER());
+        dto.setCardNumberFour(vo.getCARDNO().substring((vo.getCARDNO().length() - 4), vo.getCARDNO().length()));
+        dto.setCardNumberPreSix(vo.getCARDNO().substring(0,6));
+        return dto;
     }
 }
