@@ -97,7 +97,6 @@ public class SwallowCardInfoExcelDao {
      */
     public SwallowCardInfoDto getFromBank(String cardNo){
         String from = "S_SWALLOW_CARD";
-//        String cardNo = "6222020100123456789";
         String result = RequestUtils.loadXmlStrFromBank(from, cardNo);
 
         Document document = null;
@@ -119,7 +118,6 @@ public class SwallowCardInfoExcelDao {
             String nodeName = perElement.getName();
             String nodeStr = (String) perElement.getData();
             filterSetterUtil.seDtoValue(nodeName, nodeStr,vo);
-            System.out.println(nodeName + nodeStr + vo);
         }
         //对DTO实体进行赋值
         SwallowCardInfoDto dto = new SwallowCardInfoDto();

@@ -223,10 +223,12 @@ public class SwallowCardInfoServiceImpl implements BusinessService {
         String cardNo = (String) requestContext.get("cardNo");
         List<SwallowCardInfoDto> allInfoList = Arrays.asList(swallowCardInfoExcelDao.getFromBank(cardNo));
 
+
         //判断传入的内容是否匹配查询的结果值
         FilterSetterUtil<SwallowCardInfoDto> filterSetterUtil = new FilterSetterUtil<>();
         //设置本次节点所需要的键（入参变量）
-        List<String> goalKeys = Arrays.asList("cardNo");
+        requestContext.put("cardNumber", cardNo);
+        List<String> goalKeys = Arrays.asList("cardNumber");
         List<SwallowCardInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList, goalKeys);
         //当匹配到值时,
         if (resultList.size() > 0) {
@@ -276,6 +278,8 @@ public class SwallowCardInfoServiceImpl implements BusinessService {
         }
 
         //设置本次节点所需要的键（入参变量）
+        //设置本次节点所需要的键（入参变量）
+        requestContext.put("cardNumber", cardNo);
         List<String> goalKeys = Arrays.asList("cardNumber","cardNumberFour","eatTime",
                 "eatLocation","queryTelephone","idCardNumber");
         List<SwallowCardInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList, goalKeys);
