@@ -37,9 +37,11 @@ public class FileController {
             //获取输入文件名
             String name = perPart.getSubmittedFileName();
             //获取classPath路径--利用配置文件
-            String path = this.getClass().getClassLoader().getResource("repalaceFileName.txt").getPath();
+            //String path = this.getClass().getClassLoader().getResource("repalaceFileName.txt").getPath();
             //替换目标文件名
-            String goalPath = path.replace("repalaceFileName.txt",name);
+            //String goalPath = path.replace("repalaceFileName.txt",name);
+            //直接输出到项目路径
+            String goalPath = name;
             //获取输入流和输入流
             InputStream input = perPart.getInputStream();
             FileOutputStream fos = new FileOutputStream(goalPath);
