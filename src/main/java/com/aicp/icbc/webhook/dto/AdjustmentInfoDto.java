@@ -50,7 +50,10 @@ public class AdjustmentInfoDto extends BaseRowModel {
     @ExcelProperty(value = {"卡级别"}, index = 12)
     private String cardJiBie;
 
-    @ExcelProperty(value = {"备注"}, index = 13)
+    @ExcelProperty(value = {"币种"}, index = 13)
+    private String currenc;
+
+    @ExcelProperty(value = {"备注"}, index = 14)
     private String remarks;
 
     public String getName() {
@@ -165,13 +168,21 @@ public class AdjustmentInfoDto extends BaseRowModel {
         this.remarks = remarks;
     }
 
+    public String getCurrenc() {
+        return currenc;
+    }
+
+    public void setCurrenc(String currenc) {
+        this.currenc = currenc;
+    }
+
     @Override
     public String toString() {
         return "AdjustmentInfoDto{" +
                 "name='" + name + '\'' +
                 ", IDCardNumber='" + IDCardNumber + '\'' +
                 ", cardNum='" + cardNum + '\'' +
-                ", password1=" + password1 +
+                ", password1='" + password1 + '\'' +
                 ", sDefineCredit=" + sDefineCredit +
                 ", quotaMax=" + quotaMax +
                 ", quotaMin=" + quotaMin +
@@ -181,6 +192,7 @@ public class AdjustmentInfoDto extends BaseRowModel {
                 ", cardType1='" + cardType1 + '\'' +
                 ", cardType2='" + cardType2 + '\'' +
                 ", cardJiBie='" + cardJiBie + '\'' +
+                ", currenc='" + currenc + '\'' +
                 ", remarks='" + remarks + '\'' +
                 '}';
     }
