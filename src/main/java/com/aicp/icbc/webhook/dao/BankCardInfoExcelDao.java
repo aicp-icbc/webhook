@@ -44,9 +44,9 @@ public class BankCardInfoExcelDao  {
                 public void invoke(BankCardInfoDto object, AnalysisContext context) {
 //                    System.err.println("Row:" + context.getCurrentRowNum() + "  Data:" + object);
                     //给卡号后四位赋值
-                    String cardNum = object.getCardNumber();
+                    String cardNum = object.getCardNo();
                     if (!StringUtils.isEmpty(cardNum)){
-                        object.setCardNumberFour(cardNum.substring((cardNum.length() - 4), cardNum.length()));
+                        object.setCarNoBackFour(cardNum.substring((cardNum.length() - 4), cardNum.length()));
                     }
                     infoDtoList.add(object);
                 }

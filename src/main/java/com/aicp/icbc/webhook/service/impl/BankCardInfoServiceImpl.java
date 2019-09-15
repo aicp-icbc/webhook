@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,11 +25,11 @@ public class BankCardInfoServiceImpl implements BusinessService {
     @Autowired
     private BankCardInfoExcelDao infoExcelDao;
 
-    public final String ACTION_GET_CUSTOMER_AUTHENTICATION = "getCustomerAuthentication";
+    public final String ACTION_GET_CUSTOMER_AUTHENTICATION = "getcustomerAuthentication";
 
-    public final String ACTION_GET_CUSTOMER_AUTHENTICATION1 = "getCustomerAuthentication";
+    public final String ACTION_GET_ID_NUMBER = "getidNumber";
 
-    public final String ACTION_GET_REGISTERED_CARD = "getNotRegisteredCard";
+    public final String ACTION_GET_CARD_NOT_FOUR = "getcardNoFour";
 
     @Override
     public boolean isServiceBeCalled(Map<String, Object> requestMap) {
@@ -50,14 +51,19 @@ public class BankCardInfoServiceImpl implements BusinessService {
         Map<String, Object> requestContext = (Map<String, Object>) requestMap.get("context");
         //判断请求的action类别
         String action = (String) requestMap.get("action");
-        //1、储蓄卡挂失-用户信息获取
+        //1、储蓄卡挂失-客户身份验证
         if(this.ACTION_GET_CUSTOMER_AUTHENTICATION.equals(action)){
-            return this.getCustomerAuthenticationResult(requestContext);
+            return this.getcustomerAuthenticationResult(requestContext);
         }
 
-        //2、吞卡-吞卡记录核对
-        if(this.ACTION_GET_REGISTERED_CARD.equals(action)){
-            return this.getPasswordValidationResult(requestContext);
+        //2、储蓄卡挂失-客户身份验证
+        if(this.ACTION_GET_ID_NUMBER.equals(action)){
+            return this.getidNumberResult(requestContext);
+        }
+
+        //3、储蓄卡挂失-客户身份验证
+        if(this.ACTION_GET_CARD_NOT_FOUR.equals(action)){
+            return this.getcardNoFour(requestContext);
         }
 
 
@@ -65,38 +71,47 @@ public class BankCardInfoServiceImpl implements BusinessService {
     }
 
     /**
-     * 1、储蓄卡挂失-用户信息获取
-     *是否存在吞卡记录（Y/N）
-     * 如果主叫号码不存在记录，则返回N
+     *1、储蓄卡挂失-客户身份验证
+     *入参
+     * 参数名	字段类型	字段描述	备注
+     * CardNO	string	银行卡卡号	返回卡号
+     * 出参
+     * 参数名	字段类型	字段描述	备注
+     * matchFlag	string	是否成功匹配数据	返回值为Y/N，分别表示成功与失败
+     * 			返回全部字段信息
      * @param requestContext
      * @return
      */
-    private Map<String, Object> getCustomerAuthenticationResult(Map<String, Object> requestContext){
+    private Map<String, Object> getcustomerAuthenticationResult(Map<String, Object> requestContext){
         Map<String, Object> data = new HashMap<>();
+
+        //银行卡号
+        String CardNO = (String)requestContext.get("CardNO");
+        //替换原本的日志字段
+        requestContext.put("cardNo",CardNO);
+
 
         //获取全部Excel中的记录
         List<BankCardInfoDto> allInfoList = infoExcelDao.getAllInfoList();
 
         //判断传入的内容是否匹配查询的结果值
         FilterSetterUtil<BankCardInfoDto> filterSetterUtil = new FilterSetterUtil<>();
-        List<BankCardInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList);
+        //设置本次节点所需要的键（入参变量）
+        List<String> goalKeys = Arrays.asList("cardNo");
+        List<BankCardInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList, goalKeys);
 
-        if (resultList.size() == 1) {
-            //当匹配到值唯一时----只有一张卡
-            //转换用户状态标识为 Y/N
-            
+        if (resultList.size() > 0) {
             //将返回的对象进行key-value赋值
-            Map<String, Object> responseContext = new HashMap<>();
-            responseContext.put("recordFlag", "Y");
+            Map<String, Object> responseContext = filterSetterUtil.setContextValue(resultList.get(0));
             //设值返回标志字段
+            responseContext.put("matchFlag", "Y");
             responseContext.put("api_response_msg", "匹配数据成功");
             responseContext.put("api_response_status", true);
             data.put("context", responseContext);
         } else if (resultList.size()  == 0 ){
             //当未匹配到值时
             Map<String, Object> responseContext = new HashMap<>();
-            responseContext.put("recordFlag", "N");
-
+            responseContext.put("matchFlag", "N");
             responseContext.put("api_response_msg", "无法匹配到记录");
             responseContext.put("api_response_status", true);
             data.put("context", responseContext);
@@ -106,25 +121,33 @@ public class BankCardInfoServiceImpl implements BusinessService {
 
 
     /**
-     * 2、吞卡-吞卡记录核对
-     *卡号,卡号后四位,吞卡时间,吞卡位置,四个参数至少存在一个
+     * 2、储蓄卡挂失-客户身份验证
+     *参数名	字段类型	字段描述	备注
+     * idNumber	string	身份证号
+     * 出参
+     * 参数名	字段类型	字段描述	备注
+     * cardNoFour	string	卡号后四位	仅返回所有的卡号后四位，返回字符串类型
+     * recordFlag	string		判断卡号是否唯一，仅有一张卡输出Y；多张卡为N
      * @param requestContext
      * @return
      */
-    private Map<String, Object> getPasswordValidationResult(Map<String, Object> requestContext){
+    private Map<String, Object> getidNumberResult(Map<String, Object> requestContext){
         Map<String, Object> data = new HashMap<>();
         //获取全部Excel中的记录
         List<BankCardInfoDto> allInfoList = infoExcelDao.getAllInfoList();
 
         //判断传入的内容是否匹配查询的结果值
         FilterSetterUtil<BankCardInfoDto> filterSetterUtil = new FilterSetterUtil<>();
-        List<BankCardInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList);
+        List<String> goalKeys = Arrays.asList("idNumber");
+        List<BankCardInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList, goalKeys);
 
         if (resultList.size() == 1) {
             //当匹配到唯一值时,
             //将返回的对象进行key-value赋值
             Map<String, Object> responseContext = filterSetterUtil.setContextValue(resultList.get(0));
-            responseContext.put("responseDataSize", resultList.size());
+            //设置返回字段值
+            responseContext.put("matchFlag", "Y");
+            responseContext.put("recordFlag", "Y");
 
             //设值返回标志字段
             responseContext.put("api_response_msg", "匹配数据成功");
@@ -133,33 +156,20 @@ public class BankCardInfoServiceImpl implements BusinessService {
         } else if (resultList.size()  > 1 ){
             //当匹配到多个值时
             Map<String, Object> responseContext = new HashMap<>();
+            responseContext.put("matchFlag", "Y");
+            responseContext.put("recordFlag", "N");
 
-            //将每个值的键加上index后缀
+            //取全部的卡号后四位
+            String carNoBackFourStr = "";
             for (Integer i = 0; i < resultList.size() ; i ++) {
                 BankCardInfoDto perDto = resultList.get(i);
-                String indexStr = i == 0 ? "" : i.toString();
-                Map<String, Object> perContext = new HashMap<>();
-
-                //取所有定义字段
-                Field[] fields = perDto.getClass().getDeclaredFields();
-
-                //判断字段值是否为空
-                for (Field perField:fields) {
-                    perField.setAccessible(true);
-                    try {
-                        if(!StringUtils.isEmpty(perField.get(perDto))){
-                            //取非空字段进行 key，value赋值
-                            perContext.put(perField.getName() + indexStr, perField.get(perDto));
-                        }
-                    }catch (IllegalAccessException e){
-                        e.printStackTrace();
-                        log.error("无法访问字段");
-                    }
+                if(i == 0){
+                    carNoBackFourStr += "卡号"+(i+1) + "、"+perDto.getCarNoBackFour();
+                }else {
+                    carNoBackFourStr += "；" + "卡号"+(i+1) + "、"+perDto.getCarNoBackFour();
                 }
-                //将所有的key，value值放进返回的context中
-                responseContext.putAll(perContext);
             }
-            responseContext.put("responseDataSize", resultList.size());
+            responseContext.put("carNoBackFour",carNoBackFourStr);
 
             //设值返回标志字段
             responseContext.put("api_response_msg", "匹配数据成功");
@@ -169,7 +179,7 @@ public class BankCardInfoServiceImpl implements BusinessService {
             //当匹配不到值时
             Map<String, Object> responseContext = new HashMap<>();
             responseContext.put("responseDataSize", resultList.size());
-
+            responseContext.put("matchFlag", "N");
             //设值返回标志字段
             responseContext.put("api_response_status", true);
             responseContext.put("api_response_msg", "无法匹配到记录");
@@ -177,6 +187,52 @@ public class BankCardInfoServiceImpl implements BusinessService {
         }
         return data;
     }
+
+
+    /**
+     *3、储蓄卡挂失-客户身份验证
+     入参
+     参数名	字段类型	字段描述	备注
+     carNoBackFour	string	卡号后四位
+     出参
+     参数名	字段类型	字段描述	备注
+     返回全部字段信息
+     matchFlag	String	是否成功匹配数据	返回值为Y/N，分别表示成功与失败
+     * 			返回全部字段信息
+     * @param requestContext
+     * @return
+     */
+    private Map<String, Object> getcardNoFour(Map<String, Object> requestContext){
+        Map<String, Object> data = new HashMap<>();
+
+        //获取全部Excel中的记录
+        List<BankCardInfoDto> allInfoList = infoExcelDao.getAllInfoList();
+
+        //判断传入的内容是否匹配查询的结果值
+        FilterSetterUtil<BankCardInfoDto> filterSetterUtil = new FilterSetterUtil<>();
+        //设置本次节点所需要的键（入参变量）
+        List<String> goalKeys = Arrays.asList("carNoBackFour","idNumber");
+        List<BankCardInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList, goalKeys);
+
+        if (resultList.size() > 0) {
+            //将返回的对象进行key-value赋值
+            Map<String, Object> responseContext = filterSetterUtil.setContextValue(resultList.get(0));
+            //设值返回标志字段
+            responseContext.put("matchFlag", "Y");
+            responseContext.put("api_response_msg", "匹配数据成功");
+            responseContext.put("api_response_status", true);
+            data.put("context", responseContext);
+        } else if (resultList.size()  == 0 ){
+            //当未匹配到值时
+            Map<String, Object> responseContext = new HashMap<>();
+            responseContext.put("matchFlag", "N");
+            responseContext.put("api_response_msg", "无法匹配到记录");
+            responseContext.put("api_response_status", true);
+            data.put("context", responseContext);
+        }
+        return data;
+    }
+
 
 
     /**
