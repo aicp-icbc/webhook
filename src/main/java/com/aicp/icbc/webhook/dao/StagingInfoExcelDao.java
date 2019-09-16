@@ -10,8 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +35,8 @@ public class StagingInfoExcelDao {
         InputStream in = null;
         try {
             //获取输入流
-            in = this.getClass().getClassLoader().getResourceAsStream(fileName);
+            //            in = this.getClass().getClassLoader().getResourceAsStream(fileName);
+            in = new FileInputStream(new File(fileName));
 
             AnalysisEventListener<StagingInfoDto> listener = new AnalysisEventListener<StagingInfoDto>() {
 
@@ -70,7 +70,9 @@ public class StagingInfoExcelDao {
                 // 第一个参数表示sheet页（第几页），第二个参数为表头行数，按照实际设置
                 excelReader.read(new Sheet(2, 3, StagingInfoDto.class));
             }
-        }   finally {
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } finally {
             try {
                 //关闭输入流
                 if(in != null){

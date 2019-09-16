@@ -24,9 +24,9 @@ import java.util.List;
 @Controller
 public class FileController {
 
-    @RequestMapping("/update")
+    @RequestMapping("/update/projectpath")
     @ResponseBody
-    public String updateFile(HttpServletRequest request) throws IOException, ServletException {
+    public String updateFile(HttpServletRequest request) throws ServletException, IOException, InterruptedException {
         //获取文件流
         Collection<Part> parts = request.getParts();
         //累积接受的文件名
@@ -44,12 +44,35 @@ public class FileController {
             String goalPath = name;
             //获取输入流和输入流
             InputStream input = perPart.getInputStream();
-            FileOutputStream fos = new FileOutputStream(goalPath);
-            filePath += goalPath + "\t";
-            //读取文件并写出
-            while ((size = input.read(buffer,0,1024)) != -1) {
-                fos.write(buffer, 0, size);
+            FileOutputStream fos = null;
+            //防止文件占用 -- 出错重试
+            try {
+                fos = new FileOutputStream(goalPath);
+                filePath += goalPath + "\t";
+                //读取文件并写出
+                while ((size = input.read(buffer,0,1024)) != -1) {
+                    fos.write(buffer, 0, size);
+                }
+            }catch (Exception e){
+                try {
+                    Thread.sleep(200);
+                    fos = new FileOutputStream(goalPath);
+                    filePath += goalPath + "\t";
+                    //读取文件并写出
+                    while ((size = input.read(buffer,0,1024)) != -1) {
+                        fos.write(buffer, 0, size);
+                    }
+                }catch (Exception e1){
+                    Thread.sleep(400);
+                    fos = new FileOutputStream(goalPath);
+                    filePath += goalPath + "\t";
+                    //读取文件并写出
+                    while ((size = input.read(buffer,0,1024)) != -1) {
+                        fos.write(buffer, 0, size);
+                    }
+                }
             }
+
             if (fos != null){
                 fos.close();
             }
