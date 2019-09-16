@@ -51,5 +51,7 @@ public class BalanceMindInfoDto extends BaseRowModel {
     @ExcelProperty(value = {"手机号是否为柜面预留"}, index = 12)
     private String ifPhone;
 
+    @ExcelProperty(value = {"测试编号"}, index = 13)
+    private String NO;
 
 }

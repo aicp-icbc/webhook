@@ -76,7 +76,7 @@ public class BalanceMindInfoServiceImpl implements BusinessService {
         //判断传入的内容是否匹配查询的结果值
         FilterSetterUtil<BalanceMindInfoDto> filterSetterUtil = new FilterSetterUtil<>();
         //设置本次节点所需要的键（入参变量）
-        List<String> goalKeys = Arrays.asList("userName");
+        List<String> goalKeys = Arrays.asList("userName","NO","cardNumber");
         List<BalanceMindInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList, goalKeys);
 
         //当匹配到值时,
@@ -125,7 +125,7 @@ public class BalanceMindInfoServiceImpl implements BusinessService {
         //判断传入的内容是否匹配查询的结果值
         FilterSetterUtil<BalanceMindInfoDto> filterSetterUtil = new FilterSetterUtil<>();
         //设置本次节点所需要的键（入参变量）
-        List<String> goalKeys = Arrays.asList("sysDate", "userName");
+        List<String> goalKeys = Arrays.asList("sysDate", "NO");
         List<BalanceMindInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList, goalKeys);
 
 
