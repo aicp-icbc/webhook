@@ -87,8 +87,17 @@ public class BankCardInfoServiceImpl implements BusinessService {
 
         //银行卡号
         String CardNO = (String)requestContext.get("CardNO");
-        //替换原本的日志字段
-        requestContext.put("cardNo",CardNO);
+        //替换原本的卡号字段
+        if(!StringUtils.isEmpty(CardNO)){
+            requestContext.put("cardNo",CardNO);
+        }
+
+        //证件号码
+        String IDNumber = (String)requestContext.get("IDNumber");
+        //替换原本的证件号码字段
+        if(!StringUtils.isEmpty(IDNumber)){
+            requestContext.put("idNumber",IDNumber);
+        }
 
 
         //获取全部Excel中的记录
@@ -97,7 +106,7 @@ public class BankCardInfoServiceImpl implements BusinessService {
         //判断传入的内容是否匹配查询的结果值
         FilterSetterUtil<BankCardInfoDto> filterSetterUtil = new FilterSetterUtil<>();
         //设置本次节点所需要的键（入参变量）
-        List<String> goalKeys = Arrays.asList("cardNo");
+        List<String> goalKeys = Arrays.asList("cardNo","idNumber");
         List<BankCardInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList, goalKeys);
 
         if (resultList.size() > 0) {
