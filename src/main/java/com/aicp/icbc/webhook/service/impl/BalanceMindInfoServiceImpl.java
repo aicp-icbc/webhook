@@ -11,10 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @DESC:收不到余额变动提醒流程server
@@ -170,20 +167,26 @@ public class BalanceMindInfoServiceImpl implements BusinessService {
     private Map<String, Object> getBalanceMindSyscardResult(Map<String, Object> requestContext){
         Map<String, Object> data = new HashMap<>();
 
-        //第二次验证交易记录日期字段
+        //取卡号后四位
         String kahao = (String)requestContext.get("kahao");
-        //替换原本的日志字段
-        requestContext.put("cardNumber",kahao);
+
 
         //获取全部Excel中的记录
         List<BalanceMindInfoDto> allInfoList = infoExcelDao.getAllInfoList();
 
         //判断传入的内容是否匹配查询的结果值
         FilterSetterUtil<BalanceMindInfoDto> filterSetterUtil = new FilterSetterUtil<>();
-        //设置本次节点所需要的键（入参变量）
-        List<String> goalKeys = Arrays.asList("cardNumber");
-        List<BalanceMindInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList, goalKeys);
-
+        //判断传入的后四位是否包含在查询出来的Excel列表中
+        List<BalanceMindInfoDto> resultList = new ArrayList<>();
+        for (BalanceMindInfoDto perDto:allInfoList) {
+            //取每个卡号的后四位进行判断
+            String cardNumber = perDto.getCardNumber();
+            if(!StringUtils.isEmpty(cardNumber)){
+                if(kahao.equals(cardNumber.substring(cardNumber.length() - 4, cardNumber.length()))){
+                    resultList.add(perDto);
+                }
+            }
+        }
 
         //当匹配到值时,
         if (resultList.size() > 0) {
