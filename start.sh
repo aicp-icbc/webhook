@@ -2,14 +2,12 @@
 
 rm -f tpid
 
-rm -f back-webhook-server.jar
+nohup java -jar webhook-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev >webhook.log &
 
-mv webhook-server.jar  back-webhook-server.jar
+tpid=$!
 
-mv webhook-0.0.1-SNAPSHOT.jar webhook-server.jar
+echo 'Start Process...'    $tpid
 
-nohup java -jar webhook-server.jar --spring.profiles.active=dev >webhook.log &
-
-echo $! > tpid
+echo $tpid > tpid
 
 echo Start Success!
