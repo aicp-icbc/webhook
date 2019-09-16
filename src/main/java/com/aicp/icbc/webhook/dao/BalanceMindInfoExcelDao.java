@@ -9,8 +9,7 @@ import com.alibaba.excel.support.ExcelTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +34,8 @@ public class BalanceMindInfoExcelDao {
         InputStream in = null;
         try {
             //获取输入流
-            in = this.getClass().getClassLoader().getResourceAsStream(fileName);
+            //            in = this.getClass().getClassLoader().getResourceAsStream(fileName);
+            in = new FileInputStream(new File(fileName));
 
             AnalysisEventListener<BalanceMindInfoDto> listener = new AnalysisEventListener<BalanceMindInfoDto>() {
 
@@ -61,6 +61,8 @@ public class BalanceMindInfoExcelDao {
                 // 第一个参数表示sheet页（第几页），第二个参数为表头行数，按照实际设置
                 excelReader.read(new Sheet(6, 2, BalanceMindInfoDto.class));
             }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         } finally {
             try {
                 //关闭输入流

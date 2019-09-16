@@ -54,5 +54,4 @@ public class BalanceMindInfoDto extends BaseRowModel {
     @ExcelProperty(value = {"测试编号"}, index = 13)
     private String NO;
 
-
 }

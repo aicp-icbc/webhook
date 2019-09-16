@@ -51,6 +51,10 @@ public class WebHookController extends BaseWebHookController{
     @Qualifier("HelperInfoService")
     BusinessService helperInfoService;
 
+    @Autowired
+    @Qualifier("BankCardInfoService")
+    BusinessService bankCardInfoService;
+
     /**
      * 获取返回值结果
      * @param requestBody
