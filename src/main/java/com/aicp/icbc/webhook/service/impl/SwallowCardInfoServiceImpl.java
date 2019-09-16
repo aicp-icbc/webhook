@@ -148,7 +148,7 @@ public class SwallowCardInfoServiceImpl implements BusinessService {
 
         //设置本次节点所需要的键（入参变量）
         List<String> goalKeys = Arrays.asList("cardNumber","cardNumberFour","eatTime",
-                "eatLocation","queryTelephone","idCardNumber");
+                "eatLocation","queryTelephone","idCardNumber","machineNum");
         List<SwallowCardInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList, goalKeys);
 
         if (resultList.size() == 1) {
