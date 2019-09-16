@@ -114,6 +114,16 @@ public class BankCardInfoServiceImpl implements BusinessService {
             Map<String, Object> responseContext = filterSetterUtil.setContextValue(resultList.get(0));
             //设值返回标志字段
             responseContext.put("matchFlag", "Y");
+            //判断是否有卡号--默认为N
+            responseContext.put("cardFlag", "N");
+            for (Integer i = 0; i < resultList.size() ; i ++) {
+                BankCardInfoDto perDto = resultList.get(i);
+                //更新是否有卡号标识
+                if(!StringUtils.isEmpty(resultList.get(i).getCardNo())){
+                    responseContext.put("cardFlag", "Y");
+                }
+            }
+
             responseContext.put("api_response_msg", "匹配数据成功");
             responseContext.put("api_response_status", true);
             data.put("context", responseContext);
@@ -121,6 +131,8 @@ public class BankCardInfoServiceImpl implements BusinessService {
             //当未匹配到值时
             Map<String, Object> responseContext = new HashMap<>();
             responseContext.put("matchFlag", "N");
+            //判断是否有卡号--默认为N
+            responseContext.put("cardFlag", "N");
             responseContext.put("api_response_msg", "无法匹配到记录");
             responseContext.put("api_response_status", true);
             data.put("context", responseContext);
@@ -155,9 +167,19 @@ public class BankCardInfoServiceImpl implements BusinessService {
             //将返回的对象进行key-value赋值
             Map<String, Object> responseContext = filterSetterUtil.setContextValue(resultList.get(0));
             //设置返回字段值
+            //判断是否命中身份证
             responseContext.put("matchFlag", "Y");
+            //判断是否只有一张卡
             responseContext.put("recordFlag", "Y");
-
+            //判断是否有卡号
+            if(!StringUtils.isEmpty(resultList.get(0).getCardNo())){
+                //更新卡号数量
+                responseContext.put("carNoBackFourStr",resultList.get(0).getCarNoBackFour());
+                //更新是否有卡号标识
+                responseContext.put("cardFlag", "Y");
+            }else {
+                responseContext.put("cardFlag", "N");
+            }
             //设值返回标志字段
             responseContext.put("api_response_msg", "匹配数据成功");
             responseContext.put("api_response_status", true);
@@ -165,21 +187,31 @@ public class BankCardInfoServiceImpl implements BusinessService {
         } else if (resultList.size()  > 1 ){
             //当匹配到多个值时
             Map<String, Object> responseContext = new HashMap<>();
+            //判断是否命中身份证
             responseContext.put("matchFlag", "Y");
+            //判断是否只有一张卡
             responseContext.put("recordFlag", "N");
+            //判断是否有卡号--默认为N
+            responseContext.put("cardFlag", "N");
 
             //取全部的卡号后四位
             String carNoBackFourStr = "";
-            for (Integer i = 0; i < resultList.size() ; i ++) {
+            for (Integer i = 0, j = 0; i < resultList.size() ; i ++) {
                 BankCardInfoDto perDto = resultList.get(i);
-                if(i == 0){
-                    carNoBackFourStr += "卡号"+(i+1) + "、"+perDto.getCarNoBackFour();
-                }else {
-                    carNoBackFourStr += "；" + "卡号"+(i+1) + "、"+perDto.getCarNoBackFour();
+                //更新是否有卡号标识
+                if(!StringUtils.isEmpty(resultList.get(i).getCardNo())){
+                    responseContext.put("cardFlag", "Y");
+                    //更新卡号数量
+                    if(j == 0){
+                        carNoBackFourStr += "卡号"+(j+1) + "、"+perDto.getCarNoBackFour();
+                    }else {
+                        carNoBackFourStr += "；" + "卡号"+(j+1) + "、"+perDto.getCarNoBackFour();
+                    }
+                    j ++;
                 }
             }
             responseContext.put("carNoBackFourStr",carNoBackFourStr);
-
+            
             //设值返回标志字段
             responseContext.put("api_response_msg", "匹配数据成功");
             responseContext.put("api_response_status", true);
@@ -187,7 +219,7 @@ public class BankCardInfoServiceImpl implements BusinessService {
         }else if (resultList.size() == 0 ){
             //当匹配不到值时
             Map<String, Object> responseContext = new HashMap<>();
-            responseContext.put("responseDataSize", resultList.size());
+            //判断是否命中身份证
             responseContext.put("matchFlag", "N");
             //设值返回标志字段
             responseContext.put("api_response_status", true);
