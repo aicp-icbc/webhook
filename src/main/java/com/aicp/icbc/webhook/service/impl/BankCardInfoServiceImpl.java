@@ -178,7 +178,7 @@ public class BankCardInfoServiceImpl implements BusinessService {
                     carNoBackFourStr += "；" + "卡号"+(i+1) + "、"+perDto.getCarNoBackFour();
                 }
             }
-            responseContext.put("carNoBackFour",carNoBackFourStr);
+            responseContext.put("carNoBackFourStr",carNoBackFourStr);
 
             //设值返回标志字段
             responseContext.put("api_response_msg", "匹配数据成功");
