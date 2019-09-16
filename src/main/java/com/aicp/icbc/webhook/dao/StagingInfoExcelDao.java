@@ -51,6 +51,12 @@ public class StagingInfoExcelDao {
                                 object.setOverdraft(object.getOverdraft().replaceAll("-",""));
                             }
                         }
+                        //赋值卡号后四位
+                        if(object.getCardNumber() != null){
+                            String cardNumberStr = object.getCardNumber();
+                            object.setZdCardNumberFour(cardNumberStr.substring(cardNumberStr.length()-4, cardNumberStr.length()));
+                        }
+
                         infoDtoList.add(object);
                     }
                 }
