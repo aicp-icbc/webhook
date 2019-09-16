@@ -29,6 +29,9 @@ public class BalanceMindInfoServiceImpl implements BusinessService {
 
     public final String ACTION_GET_BALANCE_MIND_SYSDATE = "getBalanceMindSysdate";
 
+    public final String ACTION_GET_BALANCE_MIND_SYSCARD = "getBalanceMindSysCard";
+
+
 
     @Override
     public boolean isServiceBeCalled(Map<String, Object> requestMap) {
@@ -58,7 +61,10 @@ public class BalanceMindInfoServiceImpl implements BusinessService {
         if(this.ACTION_GET_BALANCE_MIND_SYSDATE.equals(action)){
             return this.getBalanceMindSysdateResult(requestContext);
         }
-
+        //3、卡号记录验证
+        if(this.ACTION_GET_BALANCE_MIND_SYSCARD.equals(action)){
+            return this.getBalanceMindSyscardResult(requestContext);
+        }
         return new HashMap<>();
     }
 
@@ -154,6 +160,57 @@ public class BalanceMindInfoServiceImpl implements BusinessService {
         }
         return data;
     }
+
+    /**
+     * 3、收不到余额提醒--判读卡号是否存在记录
+     *不存在记录，则返回N, 存在返回Y
+     * @param requestContext
+     * @return
+     */
+    private Map<String, Object> getBalanceMindSyscardResult(Map<String, Object> requestContext){
+        Map<String, Object> data = new HashMap<>();
+
+        //第二次验证交易记录日期字段
+        String kahao = (String)requestContext.get("kahao");
+        //替换原本的日志字段
+        requestContext.put("cardNumber",kahao);
+
+        //获取全部Excel中的记录
+        List<BalanceMindInfoDto> allInfoList = infoExcelDao.getAllInfoList();
+
+        //判断传入的内容是否匹配查询的结果值
+        FilterSetterUtil<BalanceMindInfoDto> filterSetterUtil = new FilterSetterUtil<>();
+        //设置本次节点所需要的键（入参变量）
+        List<String> goalKeys = Arrays.asList("cardNumber");
+        List<BalanceMindInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList, goalKeys);
+
+
+        //当匹配到值时,
+        if (resultList.size() > 0) {
+            //将返回的对象进行key-value赋值
+            Map<String, Object> responseContext = filterSetterUtil.setContextValue(resultList.get(0));
+
+            responseContext.put("cardFlag", "Y");
+            responseContext.put("responseDataSize",resultList.size());
+
+            //设值返回标志字段
+            responseContext.put("api_response_msg", "匹配数据成功");
+            responseContext.put("api_response_status", true);
+            data.put("context", responseContext);
+        } else if (resultList.size()  == 0 ){
+            //当未匹配到值时
+            Map<String, Object> responseContext = new HashMap<>();
+            responseContext.put("cardFlag", "N");
+            responseContext.put("responseDataSize",resultList.size());
+
+            //设值返回标志字段
+            responseContext.put("api_response_msg", "无法匹配到记录");
+            responseContext.put("api_response_status", true);
+            data.put("context", responseContext);
+        }
+        return data;
+    }
+
 
 
 
