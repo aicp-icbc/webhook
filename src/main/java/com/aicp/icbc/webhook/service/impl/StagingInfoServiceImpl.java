@@ -93,6 +93,7 @@ public class StagingInfoServiceImpl implements BusinessService {
         //判断传入的内容是否匹配查询的结果值
         FilterSetterUtil<StagingInfoDto> filterSetterUtil = new FilterSetterUtil<>();
         //设置本次节点所需要的键（入参变量）
+//        List<String> goalKeys = Arrays.asList("userName","cardNumber","idCardNumber");
         List<String> goalKeys = Arrays.asList("userName","cardNumber");
         List<StagingInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList, goalKeys);
         //当匹配到值时,
