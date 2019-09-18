@@ -99,14 +99,14 @@ public class SwallowCardInfoServiceImpl implements BusinessService {
         //判断传入的内容是否匹配查询的结果值
         FilterSetterUtil<SwallowCardInfoDto> filterSetterUtil = new FilterSetterUtil<>();
         //设置本次节点所需要的键（入参变量）
-        List<String> goalKeys = Arrays.asList("phoneNumber");
+        List<String> goalKeys = Arrays.asList("phoneNumber","cardNumber");
         List<SwallowCardInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList, goalKeys);
         //当匹配到值时,
         if (resultList.size() > 0) {
             //将返回的对象进行key-value赋值
             Map<String, Object> responseContext = new HashMap<>();
             responseContext.put("recordFlag", "Y");
-
+            responseContext.put("systemRecordFlag", resultList.get(0).getSystemRecordFlag());
             //设值返回标志字段
             responseContext.put("api_response_msg", "匹配数据成功");
             responseContext.put("api_response_status", true);

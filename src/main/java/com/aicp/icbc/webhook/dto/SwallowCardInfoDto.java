@@ -19,23 +19,29 @@ public class SwallowCardInfoDto extends BaseRowModel {
     @ExcelProperty(value = {"证件号"}, index = 1)
     private String idCardNumber;
 
-    @ExcelProperty(value = {"联系电话"}, index = 2)
-    private String phoneNumber;
-
-    @ExcelProperty(value = {"卡号"}, index = 3)
+    @ExcelProperty(value = {"卡号"}, index = 2)
     private String cardNumber;
 
-    @ExcelProperty(value = {"机具编号"}, index = 4)
+    @ExcelProperty(value = {"密码"}, index = 3)
+    private String password;
+
+    @ExcelProperty(value = {"联系电话"}, index = 4)
+    private String phoneNumber;
+
+    @ExcelProperty(value = {"机具编号"}, index = 5)
     private String machineNum;
 
-    @ExcelProperty(value = {"机具位置"}, index = 5)
+    @ExcelProperty(value = {"机具位置"}, index = 6)
     private String eatLocation;
 
-    @ExcelProperty(value = {"管理网点"}, index = 6)
+    @ExcelProperty(value = {"管理网点"}, index = 7)
     private String bank;
 
-    @ExcelProperty(value = {"吞卡时间"}, index = 7)
+    @ExcelProperty(value = {"吞卡时间"}, index = 8)
     private String eatTime;
+
+    @ExcelProperty(value = {"系统记录情况"}, index = 9)
+    private String systemRecordFlag;
 
     /**
      * 银行卡后四位
