@@ -27,6 +27,8 @@ public class BankCardInfoServiceImpl implements BusinessService {
 
     public final String ACTION_GET_CUSTOMER_AUTHENTICATION = "getcustomerAuthentication";
 
+    public final String ACTION_GET_CUSTOMER_AUTHENTICATION_2 = "getcustomerAuthentication2";
+
     public final String ACTION_GET_ID_NUMBER = "getidNumber";
 
     public final String ACTION_GET_CARD_NOT_FOUR = "getcardNoFour";
@@ -54,6 +56,10 @@ public class BankCardInfoServiceImpl implements BusinessService {
         //1、储蓄卡挂失-客户身份验证
         if(this.ACTION_GET_CUSTOMER_AUTHENTICATION.equals(action)){
             return this.getcustomerAuthenticationResult(requestContext);
+        }
+        //1、储蓄卡挂失-客户身份验证_2
+        if(this.ACTION_GET_CUSTOMER_AUTHENTICATION_2.equals(action)){
+            return this.getcustomerAuthenticationResult2(requestContext);
         }
 
         //2、储蓄卡挂失-客户身份验证
@@ -84,6 +90,14 @@ public class BankCardInfoServiceImpl implements BusinessService {
      */
     private Map<String, Object> getcustomerAuthenticationResult(Map<String, Object> requestContext){
         Map<String, Object> data = new HashMap<>();
+        //移除影响
+        if(requestContext.containsKey("cardNo")){
+            requestContext.remove("cardNo");
+        }
+        if(requestContext.containsKey("idNumber")){
+            requestContext.remove("idNumber");
+        }
+
 
         //银行卡号
         String CardNO = (String)requestContext.get("CardNO");
@@ -98,8 +112,81 @@ public class BankCardInfoServiceImpl implements BusinessService {
         if(!StringUtils.isEmpty(IDNumber)){
             requestContext.put("idNumber",IDNumber);
         }
+        //获取全部Excel中的记录
+        List<BankCardInfoDto> allInfoList = infoExcelDao.getAllInfoList();
 
+        //判断传入的内容是否匹配查询的结果值
+        FilterSetterUtil<BankCardInfoDto> filterSetterUtil = new FilterSetterUtil<>();
+        //设置本次节点所需要的键（入参变量）
+        List<String> goalKeys = Arrays.asList("cardNo","idNumber");
+        List<BankCardInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList, goalKeys);
 
+        if (resultList.size() > 0) {
+            //将返回的对象进行key-value赋值
+            Map<String, Object> responseContext = filterSetterUtil.setContextValue(resultList.get(0));
+            //设值返回标志字段
+            responseContext.put("matchFlag", "Y");
+            //判断是否有卡号--默认为N
+            responseContext.put("cardFlag", "N");
+            for (Integer i = 0; i < resultList.size() ; i ++) {
+                BankCardInfoDto perDto = resultList.get(i);
+                //更新是否有卡号标识
+                if(!StringUtils.isEmpty(resultList.get(i).getCardNo())){
+                    responseContext.put("cardFlag", "Y");
+                }
+            }
+
+            responseContext.put("api_response_msg", "匹配数据成功");
+            responseContext.put("api_response_status", true);
+            data.put("context", responseContext);
+        } else if (resultList.size()  == 0 ){
+            //当未匹配到值时
+            Map<String, Object> responseContext = new HashMap<>();
+            responseContext.put("matchFlag", "N");
+            //判断是否有卡号--默认为N
+            responseContext.put("cardFlag", "N");
+            responseContext.put("api_response_msg", "无法匹配到记录");
+            responseContext.put("api_response_status", true);
+            data.put("context", responseContext);
+        }
+        return data;
+    }
+    /**
+     *1、储蓄卡挂失-客户身份验证
+     *入参
+     * 参数名	字段类型	字段描述	备注
+     * CardNO	string	银行卡卡号	返回卡号
+     * 出参
+     * 参数名	字段类型	字段描述	备注
+     * matchFlag	string	是否成功匹配数据	返回值为Y/N，分别表示成功与失败
+     * 			返回全部字段信息
+     * @param requestContext
+     * @return
+     */
+    private Map<String, Object> getcustomerAuthenticationResult2(Map<String, Object> requestContext){
+        Map<String, Object> data = new HashMap<>();
+
+        //移除影响
+        if(requestContext.containsKey("cardNo")){
+            requestContext.remove("cardNo");
+        }
+        if(requestContext.containsKey("idNumber")){
+            requestContext.remove("idNumber");
+        }
+
+        //银行卡号
+        String CardNO = (String)requestContext.get("CardNO2");
+        //替换原本的卡号字段
+        if(!StringUtils.isEmpty(CardNO)){
+            requestContext.put("cardNo",CardNO);
+        }
+
+        //证件号码
+        String IDNumber = (String)requestContext.get("IDNumber2");
+        //替换原本的证件号码字段
+        if(!StringUtils.isEmpty(IDNumber)){
+            requestContext.put("idNumber",IDNumber);
+        }
         //获取全部Excel中的记录
         List<BankCardInfoDto> allInfoList = infoExcelDao.getAllInfoList();
 

@@ -23,37 +23,34 @@ public class AdjustmentInfoDto extends BaseRowModel {
     @ExcelProperty(value = {"密码"}, index = 3)
     private String password1;
 
-    @ExcelProperty(value = {"当前卡片额度"}, index = 4)
+    @ExcelProperty(value = {"币种"}, index = 4)
+    private String bizhong;
+
+    @ExcelProperty(value = {"当前卡片额度"}, index = 5)
     private Integer sDefineCredit;
 
-    @ExcelProperty(value = {"最高可调整的额度"}, index = 5)
+    @ExcelProperty(value = {"最高可调整的额度"}, index = 6)
     private Integer quotaMax;
 
-    @ExcelProperty(value = {"实时生效最小值"}, index = 6)
+    @ExcelProperty(value = {"实时生效最小值"}, index = 7)
     private Integer quotaMin;
 
-    @ExcelProperty(value = {"系统身份"}, index = 7)
+    @ExcelProperty(value = {"系统身份"}, index = 8)
     private String systemIdentity;
 
-    @ExcelProperty(value = {"卡归属"}, index = 8)
+    @ExcelProperty(value = {"主副卡身份"}, index = 9)
     private String cardowner;
 
-    @ExcelProperty(value = {"卡类型"}, index = 9)
+    @ExcelProperty(value = {"卡类型"}, index = 10)
     private String cardType;
 
-    @ExcelProperty(value = {"卡类型1"}, index = 10)
+    @ExcelProperty(value = {"卡类型1"}, index = 11)
     private String cardType1;
-
-    @ExcelProperty(value = {"卡类型2"}, index = 11)
-    private String cardType2;
 
     @ExcelProperty(value = {"卡级别"}, index = 12)
     private String cardJiBie;
 
-    @ExcelProperty(value = {"币种"}, index = 13)
-    private String currenc;
-
-    @ExcelProperty(value = {"备注"}, index = 14)
+    @ExcelProperty(value = {"备注"}, index = 13)
     private String remarks;
 
     public String getName() {
@@ -86,6 +83,14 @@ public class AdjustmentInfoDto extends BaseRowModel {
 
     public void setPassword1(String password1) {
         this.password1 = password1;
+    }
+
+    public String getBizhong() {
+        return bizhong;
+    }
+
+    public void setBizhong(String bizhong) {
+        this.bizhong = bizhong;
     }
 
     public Integer getsDefineCredit() {
@@ -144,14 +149,6 @@ public class AdjustmentInfoDto extends BaseRowModel {
         this.cardType1 = cardType1;
     }
 
-    public String getCardType2() {
-        return cardType2;
-    }
-
-    public void setCardType2(String cardType2) {
-        this.cardType2 = cardType2;
-    }
-
     public String getCardJiBie() {
         return cardJiBie;
     }
@@ -168,14 +165,6 @@ public class AdjustmentInfoDto extends BaseRowModel {
         this.remarks = remarks;
     }
 
-    public String getCurrenc() {
-        return currenc;
-    }
-
-    public void setCurrenc(String currenc) {
-        this.currenc = currenc;
-    }
-
     @Override
     public String toString() {
         return "AdjustmentInfoDto{" +
@@ -183,6 +172,7 @@ public class AdjustmentInfoDto extends BaseRowModel {
                 ", IDCardNumber='" + IDCardNumber + '\'' +
                 ", cardNum='" + cardNum + '\'' +
                 ", password1='" + password1 + '\'' +
+                ", bizhong=" + bizhong +
                 ", sDefineCredit=" + sDefineCredit +
                 ", quotaMax=" + quotaMax +
                 ", quotaMin=" + quotaMin +
@@ -190,9 +180,7 @@ public class AdjustmentInfoDto extends BaseRowModel {
                 ", cardowner='" + cardowner + '\'' +
                 ", cardType='" + cardType + '\'' +
                 ", cardType1='" + cardType1 + '\'' +
-                ", cardType2='" + cardType2 + '\'' +
                 ", cardJiBie='" + cardJiBie + '\'' +
-                ", currenc='" + currenc + '\'' +
                 ", remarks='" + remarks + '\'' +
                 '}';
     }
