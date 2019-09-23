@@ -99,9 +99,46 @@ public class StagingInfoServiceImpl implements BusinessService {
         //当匹配到值时,
         if (resultList.size() > 0) {
             //将返回的对象进行key-value赋值
-            Map<String, Object> responseContext = filterSetterUtil.setContextValue(resultList.get(0));
-            //去除instalment字段
-            responseContext.remove("instalment");
+//            Map<String, Object> responseContext = filterSetterUtil.setContextValue(resultList.get(0));
+            Map<String, Object> responseContext = new HashMap<>();
+            StagingInfoDto dto = resultList.get(0);
+            //设置返回字段
+            if(!StringUtils.isEmpty(dto.getUserName())){
+                responseContext.put("userName",dto.getUserName());
+            }
+            if(!StringUtils.isEmpty(dto.getIdCardNumber())){
+                responseContext.put("idCardNumber",dto.getIdCardNumber());
+            }
+            if(!StringUtils.isEmpty(dto.getCardNumber())){
+                responseContext.put("cardNumber",dto.getCardNumber());
+            }
+            if(!StringUtils.isEmpty(dto.getPassword())){
+                responseContext.put("password",dto.getPassword());
+            }
+            if(!StringUtils.isEmpty(dto.getRegisterFlag())){
+                responseContext.put("registerFlag",dto.getRegisterFlag());
+            }
+            if(!StringUtils.isEmpty(dto.getOverdraft())){
+                responseContext.put("overdraft",dto.getOverdraft());
+            }
+            if(!StringUtils.isEmpty(dto.getCurrency())){
+                responseContext.put("currency",dto.getCurrency());
+            }
+            if(!StringUtils.isEmpty(dto.getInstalment())){
+                responseContext.put("instalment",dto.getInstalment());
+            }
+            if(!StringUtils.isEmpty(dto.getMainOrElse())){
+                responseContext.put("mainOrElse",dto.getMainOrElse());
+            }
+            if(!StringUtils.isEmpty(dto.getCardType())){
+                responseContext.put("cardType",dto.getCardType());
+            }
+            if(!StringUtils.isEmpty(dto.getMaxInstalment())){
+                responseContext.put("maxInstalment",dto.getMaxInstalment());
+            }
+            if(!StringUtils.isEmpty(dto.getRemainingAmount())){
+                responseContext.put("remainingAmount",dto.getRemainingAmount());
+            }
 
             //设置查询到记录
             responseContext.put("recordFlag", "Y");
@@ -225,6 +262,14 @@ public class StagingInfoServiceImpl implements BusinessService {
     private Map<String, Object> getCreditRateResult(Map<String, Object> requestContext){
         Map<String, Object> data = new HashMap<>();
 
+        //zdInstalment --> instalment (入参名修改)
+        //移除原本字段 -- 消除影响
+        if(requestContext.containsKey("instalment")){
+            requestContext.remove("instalment");
+        }
+        //填充目标字段
+        requestContext.put("instalment",requestContext.get("zdInstalment"));
+
         String periodsNO = (String) requestContext.get("PeriodsNO");
 
         //获取全部Excel中的记录
@@ -239,11 +284,24 @@ public class StagingInfoServiceImpl implements BusinessService {
         //当匹配到值时,
         if (resultList.size()  > 0 ){
             //设置返回值
-            StagingInfoDto stagingInfoDto = this.getStagesInfoByNumStages(resultList.get(0),periodsNO);
-            Map<String, Object> responseContext =
-                    filterSetterUtil.setContextValue(stagingInfoDto);
+            StagingInfoDto dto = this.getStagesInfoByNumStages(resultList.get(0),periodsNO);
+            Map<String, Object> responseContext = new HashMap<>();
+            if(!StringUtils.isEmpty(dto.getFirstRepaymentDate())){
+                responseContext.put("firstRepaymentDate",dto.getFirstRepaymentDate());
+            }
+            if(!StringUtils.isEmpty(dto.getServiceChargeFate())){
+                responseContext.put("serviceChargeFate",dto.getServiceChargeFate());
+            }
+            if(!StringUtils.isEmpty(dto.getServiceCharge())){
+                responseContext.put("serviceCharge",dto.getServiceCharge());
+            }
+            if(!StringUtils.isEmpty(dto.getFirstRepaymentMoney())){
+                responseContext.put("firstRepaymentMoney",dto.getFirstRepaymentMoney());
+            }
+            if(!StringUtils.isEmpty(dto.getRepaymentMoney())){
+                responseContext.put("repaymentMoney",dto.getRepaymentMoney());
+            }
             //设置查询到记录
-
             responseContext.put("recordFlag", "Y");
 
 
