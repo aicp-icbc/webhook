@@ -54,4 +54,13 @@ public class BalanceMindInfoDto extends BaseRowModel {
     @ExcelProperty(value = {"测试编号"}, index = 13)
     private String NO;
 
+    @ExcelProperty(value = {"金额一"}, index = 14)
+    private String moneyOne;
+
+    @ExcelProperty(value = {"金额二"}, index = 15)
+    private String moneyTwo;
+
+    @ExcelProperty(value = {"金额三"}, index = 16)
+    private String moneyThree;
+
 }
