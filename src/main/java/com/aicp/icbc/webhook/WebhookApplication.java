@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-@EnableAsync    //开启默认异步@Async注解支持（不编写线程池配置类，则使用默认线程池）
+@EnableAsync    //开启默认异步@Async注解支持（不编写线程池配置类，则使用默认线程池d）
 @EnableScheduling       //开启定时任务
 @EnableCaching  //开启缓存
 public class WebhookApplication {

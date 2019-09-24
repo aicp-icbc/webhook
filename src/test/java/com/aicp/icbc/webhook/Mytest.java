@@ -16,8 +16,8 @@ public class Mytest {
         map.put("2","3");
         map.put("2","3");
         map.put("4","4");
-
-        System.out.println(map.get("2"));
-        System.out.println(map.get("5"));
+        String str = "12345678";
+        String shustr = str.substring(0,str.length() -2);
+        System.out.println(shustr);
     }
 }

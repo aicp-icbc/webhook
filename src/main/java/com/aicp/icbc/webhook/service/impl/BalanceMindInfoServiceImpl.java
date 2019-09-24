@@ -28,6 +28,8 @@ public class BalanceMindInfoServiceImpl implements BusinessService {
 
     public final String ACTION_GET_BALANCE_MIND_SYSCARD = "getBalanceMindSysCard";
 
+    public final String ACTION_GET_BALANCE_MIND_MONEY = "getBalanceMindMoney";
+
 
 
     @Override
@@ -61,6 +63,10 @@ public class BalanceMindInfoServiceImpl implements BusinessService {
         //3、卡号记录验证
         if(this.ACTION_GET_BALANCE_MIND_SYSCARD.equals(action)){
             return this.getBalanceMindSyscardResult(requestContext);
+        }
+        //4、判断金额是否存在
+        if(this.ACTION_GET_BALANCE_MIND_MONEY.equals(action)){
+            return this.getBalanceMindMoneyResult(requestContext);
         }
         return new HashMap<>();
     }
@@ -205,6 +211,60 @@ public class BalanceMindInfoServiceImpl implements BusinessService {
             Map<String, Object> responseContext = new HashMap<>();
             responseContext.put("cardFlag", "N");
             responseContext.put("responseDataSize",resultList.size());
+
+            //设值返回标志字段
+            responseContext.put("api_response_msg", "无法匹配到记录");
+            responseContext.put("api_response_status", true);
+            data.put("context", responseContext);
+        }
+        return data;
+    }
+
+    /**
+     * 4、判断金额是否存在
+     *不存在记录，则返回N, 存在返回Y
+     * @param requestContext
+     * @return
+     */
+    private Map<String, Object> getBalanceMindMoneyResult(Map<String, Object> requestContext){
+        Map<String, Object> data = new HashMap<>();
+
+        //取卡号后四位
+        String jine = (String)requestContext.get("jine");
+
+
+        //获取全部Excel中的记录
+        List<BalanceMindInfoDto> allInfoList = infoExcelDao.getAllInfoList();
+
+        //判断传入的内容是否匹配查询的结果值
+        FilterSetterUtil<BalanceMindInfoDto> filterSetterUtil = new FilterSetterUtil<>();
+        //设置本次节点所需要的键（入参变量）
+        List<String> goalKeys = Arrays.asList("cardNumber");
+        List<BalanceMindInfoDto> resultList = filterSetterUtil.getMatchList(requestContext, allInfoList, goalKeys);
+
+        //当匹配到值时,
+        if (resultList.size() > 0) {
+            BalanceMindInfoDto dto = resultList.get(0);
+            //将返回的对象进行key-value赋值
+            Map<String, Object> responseContext = new HashMap<>();
+            List<String> moneyList = Arrays.asList(dto.getMoneyOne(), dto.getMoneyTwo(), dto.getMoneyThree());
+            if(moneyList.contains(jine)){
+                responseContext.put("cardFlag", "Y");
+                responseContext.put("moneyFlag", "Y");
+            }else {
+                responseContext.put("cardFlag", "Y");
+                responseContext.put("moneyFlag", "N");
+            }
+
+            //设值返回标志字段
+            responseContext.put("api_response_msg", "匹配数据成功");
+            responseContext.put("api_response_status", true);
+            data.put("context", responseContext);
+        } else if (resultList.size()  == 0 ){
+            //当未匹配到值时
+            Map<String, Object> responseContext = new HashMap<>();
+            responseContext.put("cardFlag", "N");
+            responseContext.put("moneyFlag", "N");
 
             //设值返回标志字段
             responseContext.put("api_response_msg", "无法匹配到记录");
