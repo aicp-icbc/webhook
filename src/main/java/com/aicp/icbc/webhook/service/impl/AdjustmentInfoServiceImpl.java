@@ -87,6 +87,11 @@ public class AdjustmentInfoServiceImpl implements BusinessService {
         if (resultList.size() > 0) {
             //将返回的对象进行key-value赋值
             Map<String, Object> responseContext = filterSetterUtil.setContextValue(resultList.get(0));
+            Integer quotaMax = (Integer) responseContext.get("quotaMax");
+            //当额度上限为 -1 时，修改字段值为最大值
+            if(quotaMax != null && -1 == quotaMax){
+                responseContext.put("quotaMax", Integer.MAX_VALUE);
+            }
             responseContext.put("recordFlag", "Y");
 
             //设值返回标志字段

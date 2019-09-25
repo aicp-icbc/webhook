@@ -268,7 +268,12 @@ public class StagingInfoServiceImpl implements BusinessService {
             requestContext.remove("instalment");
         }
         //填充目标字段
-        requestContext.put("instalment",requestContext.get("zdInstalment"));
+        String zdInstalment = String.valueOf(requestContext.get("zdInstalment"));
+        if(zdInstalment.indexOf(".") > -1){
+            requestContext.put("instalment",zdInstalment.substring(0, zdInstalment.length() - 2));
+        }else {
+            requestContext.put("instalment",zdInstalment);
+        }
 
         String periodsNO = (String) requestContext.get("PeriodsNO");
 
